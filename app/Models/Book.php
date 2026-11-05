@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,15 +11,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
+    use HasFactory;
+
     public const STATUS_AKTIF = 'aktif';
     public const STATUS_NONAKTIF = 'nonaktif';
 
     public const JURUSAN = ['Umum', 'RPL', 'TKJ', 'AKL', 'OTKP'];
 
+    protected $primaryKey = 'id_buku';
+
     protected $fillable = [
         'kode_buku',
         'judul',
-        'kategori_id',
+        'id_kategori',
         'penerbit',
         'tahun',
         'isbn',
@@ -44,17 +49,17 @@ class Book extends Model
 
     public function kategori(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'kategori_id');
+        return $this->belongsTo(Category::class, 'id_kategori', 'id_kategori');
     }
 
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Author::class, 'book_authors');
+        return $this->belongsToMany(Author::class, 'book_authors', 'id_buku', 'id_penulis', 'id_buku', 'id_penulis');
     }
 
     public function loanItems(): HasMany
     {
-        return $this->hasMany(LoanItem::class);
+        return $this->hasMany(LoanItem::class, 'id_buku', 'id_buku');
     }
 
     /** Pinjaman yang sedang menahan eksemplar buku ini (diajukan, dipinjam, terlambat). */

@@ -3,14 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Member extends Model
 {
+    use HasFactory;
+
+    protected $primaryKey = 'id_anggota';
+
     protected $fillable = [
-        'user_id',
+        'id_user',
         'nisn',
         'kelas',
         'jurusan',
@@ -19,12 +24,12 @@ class Member extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
     public function loans(): HasMany
     {
-        return $this->hasMany(Loan::class);
+        return $this->hasMany(Loan::class, 'id_anggota', 'id_anggota');
     }
 
     public function scopeAktif(Builder $query): Builder
