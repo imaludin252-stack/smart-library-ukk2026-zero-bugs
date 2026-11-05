@@ -180,7 +180,7 @@
 
                     <form method="POST" action="{{ route('pinjaman.store') }}" class="space-y-4 p-5">
                         @csrf
-                        <input type="hidden" name="book_id" value="{{ $book->id }}">
+                        <input type="hidden" name="id_buku" value="{{ $book->id_buku }}">
 
                         <div class="grid gap-3 sm:grid-cols-2">
                             <div class="rounded-xl bg-[var(--color-primary-50)] p-4">

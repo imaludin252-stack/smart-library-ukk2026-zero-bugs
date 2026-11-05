@@ -18,7 +18,7 @@ class ProfilController extends Controller
 
         $statistik = null;
         if ($member) {
-            Loan::segarkanKeterlambatan($member->id);
+            Loan::segarkanKeterlambatan($member->id_anggota);
             $statistik = [
                 'aktif' => Loan::untukMember($member)->whereIn('status', Loan::STATUS_AKTIF)->count(),
                 'selesai' => Loan::untukMember($member)->whereNotNull('tanggal_kembali')->count(),

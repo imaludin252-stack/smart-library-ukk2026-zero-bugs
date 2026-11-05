@@ -29,10 +29,12 @@ class Loan extends Model
         self::STATUS_DIBATALKAN => 'Dibatalkan',
     ];
 
+    protected $primaryKey = 'id_peminjaman';
+
     protected $fillable = [
         'kode_transaksi',
-        'member_id',
-        'petugas_id',
+        'id_anggota',
+        'id_user',
         'tanggal_pinjam',
         'tanggal_jatuh_tempo',
         'tanggal_kembali',
@@ -56,17 +58,17 @@ class Loan extends Model
 
     public function member(): BelongsTo
     {
-        return $this->belongsTo(Member::class);
+        return $this->belongsTo(Member::class, 'id_anggota', 'id_anggota');
     }
 
     public function petugas(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'petugas_id');
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
     public function books(): BelongsToMany
     {
-        return $this->belongsToMany(Book::class, 'loan_items');
+        return $this->belongsToMany(Book::class, 'loan_items', 'id_peminjaman', 'id_buku', 'id_peminjaman', 'id_buku');
     }
 
     public function scopeAktif(Builder $query): Builder
@@ -76,7 +78,7 @@ class Loan extends Model
 
     public function scopeUntukMember(Builder $query, Member $member): Builder
     {
-        return $query->where('member_id', $member->id);
+        return $query->where('id_anggota', $member->id_anggota);
     }
 
     public function statusLabel(): string
@@ -160,7 +162,7 @@ class Loan extends Model
             ->whereDate('tanggal_jatuh_tempo', '<', now()->toDateString());
 
         if ($memberId !== null) {
-            $query->where('member_id', $memberId);
+            $query->where('id_anggota', $memberId);
         }
 
         $query->update(['status' => self::STATUS_TERLAMBAT]);
@@ -186,13 +188,13 @@ class Loan extends Model
 
             $loan = self::create([
                 'kode_transaksi' => self::generateKodeTransaksi(),
-                'member_id' => $member->id,
+                'id_anggota' => $member->id_anggota,
                 'tanggal_pinjam' => now()->toDateString(),
                 'tanggal_jatuh_tempo' => now()->addDays($durasi)->toDateString(),
                 'status' => self::STATUS_DIAJUKAN,
             ]);
 
-            $loan->books()->attach($book->id);
+            $loan->books()->attach($book->id_buku);
 
             return $loan;
         });
@@ -204,7 +206,7 @@ class Loan extends Model
         DB::transaction(function () use ($petugas) {
             $this->update([
                 'status' => self::STATUS_DIPINJAM,
-                'petugas_id' => $petugas->id,
+                'id_user' => $petugas->id_user,
             ]);
         });
     }
@@ -214,7 +216,7 @@ class Loan extends Model
         DB::transaction(function () use ($petugas, $alasan) {
             $this->update([
                 'status' => self::STATUS_DITOLAK,
-                'petugas_id' => $petugas->id,
+                'id_user' => $petugas->id_user,
                 'catatan' => $alasan,
             ]);
         });
@@ -234,7 +236,7 @@ class Loan extends Model
             $this->update([
                 'status' => $terlambat ? self::STATUS_TERLAMBAT : self::STATUS_DIKEMBALIKAN,
                 'tanggal_kembali' => now()->toDateString(),
-                'petugas_id' => $petugas->id,
+                'id_user' => $petugas->id_user,
                 'denda' => max(0, $denda),
                 'kondisi_buku' => $kondisi,
                 'catatan' => $catatan,

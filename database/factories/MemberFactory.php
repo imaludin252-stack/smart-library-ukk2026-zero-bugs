@@ -16,7 +16,7 @@ class MemberFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'id_user' => User::factory(),
             'nisn' => fake()->unique()->numerify('00########'),
             'kelas' => fake()->randomElement(['X RPL 1', 'XI TKJ 2', 'XII AKL 1', 'XII RPL 1', 'XI OTKP 2']),
             'jurusan' => fake()->randomElement(['RPL', 'TKJ', 'AKL', 'OTKP']),

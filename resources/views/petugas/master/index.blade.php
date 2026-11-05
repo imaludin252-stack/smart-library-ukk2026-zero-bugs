@@ -54,7 +54,7 @@
                             <p class="text-[12px] text-[var(--color-ink-muted)]">{{ $item->deskripsi ?: 'Tanpa deskripsi' }} · {{ $item->books_count }} buku</p>
                         </div>
                         <div class="flex shrink-0 gap-1.5">
-                            <button type="button" data-modal-toggle="edit-kat-{{ $item->id }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
+                            <button type="button" data-modal-toggle="edit-kat-{{ $item->getKey() }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
                             <form method="POST" action="{{ route('petugas.kategori.destroy', $item) }}" data-confirm="Hapus kategori '{{ $item->nama }}'?">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-danger-ghost btn-sm"><x-icon name="trash" class="h-3.5 w-3.5" /></button>
@@ -88,7 +88,7 @@
                             <p class="text-[12px] text-[var(--color-ink-muted)]">{{ $item->books_count }} buku</p>
                         </div>
                         <div class="flex shrink-0 gap-1.5">
-                            <button type="button" data-modal-toggle="edit-pen-{{ $item->id }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
+                            <button type="button" data-modal-toggle="edit-pen-{{ $item->getKey() }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
                             <form method="POST" action="{{ route('petugas.penulis.destroy', $item) }}" data-confirm="Hapus penulis '{{ $item->nama }}'?">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-danger-ghost btn-sm"><x-icon name="trash" class="h-3.5 w-3.5" /></button>
@@ -104,26 +104,26 @@
 
     {{-- Modal edit kategori --}}
     @foreach ($kategori as $item)
-        <div data-modal="edit-kat-{{ $item->id }}" class="modal-backdrop hidden">
+        <div data-modal="edit-kat-{{ $item->getKey() }}" class="modal-backdrop hidden">
             <div class="modal-panel">
                 <form method="POST" action="{{ route('petugas.kategori.update', $item) }}">
                     @csrf @method('PUT')
                     <div class="flex items-center justify-between border-b border-[var(--color-line)] p-5">
                         <h3 class="section-title">Ubah Kategori</h3>
-                        <button type="button" data-modal-close="edit-kat-{{ $item->id }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
+                        <button type="button" data-modal-close="edit-kat-{{ $item->getKey() }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
                     </div>
                     <div class="space-y-4 p-5">
                         <div>
-                            <label class="field-label" for="kat-nama-{{ $item->id }}">Nama Kategori</label>
-                            <input id="kat-nama-{{ $item->id }}" name="nama" type="text" value="{{ $item->nama }}" class="input" required>
+                            <label class="field-label" for="kat-nama-{{ $item->getKey() }}">Nama Kategori</label>
+                            <input id="kat-nama-{{ $item->getKey() }}" name="nama" type="text" value="{{ $item->nama }}" class="input" required>
                         </div>
                         <div>
-                            <label class="field-label" for="kat-desk-{{ $item->id }}">Deskripsi</label>
-                            <input id="kat-desk-{{ $item->id }}" name="deskripsi" type="text" value="{{ $item->deskripsi }}" class="input">
+                            <label class="field-label" for="kat-desk-{{ $item->getKey() }}">Deskripsi</label>
+                            <input id="kat-desk-{{ $item->getKey() }}" name="deskripsi" type="text" value="{{ $item->deskripsi }}" class="input">
                         </div>
                     </div>
                     <div class="flex justify-end gap-2 border-t border-[var(--color-line)] p-5">
-                        <button type="button" data-modal-close="edit-kat-{{ $item->id }}" class="btn btn-ghost">Batal</button>
+                        <button type="button" data-modal-close="edit-kat-{{ $item->getKey() }}" class="btn btn-ghost">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
@@ -133,20 +133,20 @@
 
     {{-- Modal edit penulis --}}
     @foreach ($penulis as $item)
-        <div data-modal="edit-pen-{{ $item->id }}" class="modal-backdrop hidden">
+        <div data-modal="edit-pen-{{ $item->getKey() }}" class="modal-backdrop hidden">
             <div class="modal-panel">
                 <form method="POST" action="{{ route('petugas.penulis.update', $item) }}">
                     @csrf @method('PUT')
                     <div class="flex items-center justify-between border-b border-[var(--color-line)] p-5">
                         <h3 class="section-title">Ubah Penulis</h3>
-                        <button type="button" data-modal-close="edit-pen-{{ $item->id }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
+                        <button type="button" data-modal-close="edit-pen-{{ $item->getKey() }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
                     </div>
                     <div class="p-5">
-                        <label class="field-label" for="pen-nama-{{ $item->id }}">Nama Penulis</label>
-                        <input id="pen-nama-{{ $item->id }}" name="nama" type="text" value="{{ $item->nama }}" class="input" required>
+                        <label class="field-label" for="pen-nama-{{ $item->getKey() }}">Nama Penulis</label>
+                        <input id="pen-nama-{{ $item->getKey() }}" name="nama" type="text" value="{{ $item->nama }}" class="input" required>
                     </div>
                     <div class="flex justify-end gap-2 border-t border-[var(--color-line)] p-5">
-                        <button type="button" data-modal-close="edit-pen-{{ $item->id }}" class="btn btn-ghost">Batal</button>
+                        <button type="button" data-modal-close="edit-pen-{{ $item->getKey() }}" class="btn btn-ghost">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>

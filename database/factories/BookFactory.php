@@ -18,7 +18,7 @@ class BookFactory extends Factory
         return [
             'kode_buku' => strtoupper(fake()->unique()->bothify('???-???-###')),
             'judul' => fake()->sentence(3),
-            'kategori_id' => Category::factory(),
+            'id_kategori' => Category::factory(),
             'penerbit' => fake()->company(),
             'tahun' => fake()->numberBetween(2018, 2026),
             'isbn' => fake()->unique()->numerify('978-602-########-#'),

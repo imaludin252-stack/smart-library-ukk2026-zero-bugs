@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
+    protected $primaryKey = 'id_setting';
+
     protected $fillable = ['key', 'value'];
 
     public static function get(string $key, string $default = ''): string

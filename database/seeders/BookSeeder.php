@@ -55,7 +55,7 @@ class BookSeeder extends Seeder
             $book = Book::create([
                 'kode_buku' => $kode,
                 'judul' => $judul,
-                'kategori_id' => $kategori[$kategoriNama]->id,
+                'id_kategori' => $kategori[$kategoriNama]->id_kategori,
                 'penerbit' => $penerbit,
                 'tahun' => $tahun,
                 'isbn' => $isbn,
@@ -70,7 +70,7 @@ class BookSeeder extends Seeder
             ]);
 
             foreach ($penulisNama as $namaPenulis) {
-                $book->authors()->attach($penulis[$namaPenulis]->id);
+                $book->authors()->attach($penulis[$namaPenulis]->id_penulis);
             }
         }
     }

@@ -21,6 +21,8 @@ class User extends Authenticatable
     public const STATUS_AKTIF = 'aktif';
     public const STATUS_NONAKTIF = 'nonaktif';
 
+    protected $primaryKey = 'id_user';
+
     /** @var list<string> */
     protected $fillable = [
         'name',
@@ -47,12 +49,12 @@ class User extends Authenticatable
 
     public function member(): HasOne
     {
-        return $this->hasOne(Member::class);
+        return $this->hasOne(Member::class, 'id_user', 'id_user');
     }
 
     public function loansDiproses(): HasMany
     {
-        return $this->hasMany(Loan::class, 'petugas_id');
+        return $this->hasMany(Loan::class, 'id_user', 'id_user');
     }
 
     public function isSiswa(): bool

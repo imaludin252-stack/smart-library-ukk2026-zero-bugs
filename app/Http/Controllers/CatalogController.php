@@ -24,7 +24,7 @@ class CatalogController extends Controller
 
         $dipinjamSub = LoanItem::query()
             ->selectRaw('count(*)')
-            ->whereColumn('loan_items.book_id', 'books.id')
+            ->whereColumn('loan_items.id_buku', 'books.id_buku')
             ->whereHas('loan', fn ($query) => $query->whereIn('status', Loan::STATUS_AKTIF));
 
         $query = Book::query()
@@ -45,7 +45,7 @@ class CatalogController extends Controller
         }
 
         if ($filters['kategori']) {
-            $query->where('kategori_id', $filters['kategori']);
+            $query->where('id_kategori', $filters['kategori']);
         }
 
         if ($filters['jurusan']) {
@@ -97,14 +97,14 @@ class CatalogController extends Controller
         if ($member) {
             $pinjamanSaya = Loan::untukMember($member)
                 ->whereIn('status', Loan::STATUS_AKTIF)
-                ->whereHas('books', fn ($q) => $q->where('books.id', $book->id))
+                ->whereHas('books', fn ($q) => $q->where('books.id_buku', $book->id_buku))
                 ->first();
         }
 
         $terkait = Book::query()
             ->with(['authors'])
-            ->where('kategori_id', $book->kategori_id)
-            ->where('id', '!=', $book->id)
+            ->where('id_kategori', $book->id_kategori)
+            ->where('id_buku', '!=', $book->id_buku)
             ->where('status', Book::STATUS_AKTIF)
             ->withCount(['loanItems as dipinjam_count' => fn ($q) => $q->whereHas('loan', fn ($l) => $l->whereIn('status', Loan::STATUS_AKTIF))])
             ->limit(4)

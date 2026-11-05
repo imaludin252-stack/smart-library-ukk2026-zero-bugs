@@ -88,8 +88,8 @@ class LoanSeeder extends Seeder
 
         $loan = Loan::create([
             'kode_transaksi' => Loan::generateKodeTransaksi(),
-            'member_id' => $member->id,
-            'petugas_id' => $petugas?->id,
+            'id_anggota' => $member->id_anggota,
+            'id_user' => $petugas?->id_user,
             'tanggal_pinjam' => $pinjam->toDateString(),
             'tanggal_jatuh_tempo' => $jatuhTempo->toDateString(),
             'tanggal_kembali' => in_array($status, [Loan::STATUS_DIKEMBALIKAN, Loan::STATUS_DITOLAK, Loan::STATUS_DIBATALKAN], true)
@@ -97,7 +97,7 @@ class LoanSeeder extends Seeder
             'status' => $status,
         ]);
 
-        $loan->books()->attach($book->id);
+        $loan->books()->attach($book->id_buku);
 
         return $loan;
     }

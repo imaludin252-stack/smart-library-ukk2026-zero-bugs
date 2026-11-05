@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('members', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->id('id_anggota');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->cascadeOnDelete();
             $table->string('nisn', 20)->unique();
             $table->string('kelas', 30);
             $table->string('jurusan', 10)->default('RPL');

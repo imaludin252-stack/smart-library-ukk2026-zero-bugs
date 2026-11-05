@@ -50,7 +50,7 @@ class RegisterController extends Controller
             ]);
 
             Member::create([
-                'user_id' => $user->id,
+                'id_user' => $user->id_user,
                 'nisn' => $data['nisn'],
                 'kelas' => $data['kelas'],
                 'jurusan' => $data['jurusan'],

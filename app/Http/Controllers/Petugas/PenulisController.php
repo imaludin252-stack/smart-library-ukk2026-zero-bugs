@@ -24,7 +24,7 @@ class PenulisController extends Controller
     public function update(Request $request, Author $author): RedirectResponse
     {
         $data = $request->validate([
-            'nama' => ['required', 'string', 'max:100', Rule::unique('authors', 'nama')->ignore($author->id)],
+            'nama' => ['required', 'string', 'max:100', Rule::unique('authors', 'nama')->ignore($author->getKey())],
         ], [], ['nama' => 'nama penulis']);
 
         $author->update($data);

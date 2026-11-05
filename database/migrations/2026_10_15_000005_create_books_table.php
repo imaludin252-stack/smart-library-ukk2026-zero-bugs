@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('books', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_buku');
             $table->string('kode_buku', 30)->unique();
             $table->string('judul');
-            $table->foreignId('kategori_id')->constrained('categories')->restrictOnDelete();
+            $table->foreignId('id_kategori')->constrained('categories', 'id_kategori')->restrictOnDelete();
             $table->string('penerbit')->nullable();
             $table->smallInteger('tahun')->nullable();
             $table->string('isbn', 30)->nullable();

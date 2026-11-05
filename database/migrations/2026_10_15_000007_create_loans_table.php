@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('loans', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_peminjaman');
             $table->string('kode_transaksi', 30)->unique();
-            $table->foreignId('member_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('petugas_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('id_anggota')->constrained('members', 'id_anggota')->cascadeOnDelete();
+            $table->foreignId('id_user')->nullable()->constrained('users', 'id_user')->nullOnDelete();
             $table->date('tanggal_pinjam');
             $table->date('tanggal_jatuh_tempo');
             $table->date('tanggal_kembali')->nullable();

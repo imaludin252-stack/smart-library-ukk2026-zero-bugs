@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
             ]);
 
             Member::create([
-                'user_id' => $user->id,
+                'id_user' => $user->id_user,
                 'nisn' => $nisn,
                 'kelas' => $kelas,
                 'jurusan' => $jurusan,

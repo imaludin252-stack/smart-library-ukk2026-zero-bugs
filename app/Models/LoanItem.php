@@ -7,18 +7,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LoanItem extends Model
 {
+    protected $primaryKey = 'id_item';
+
     protected $fillable = [
-        'loan_id',
-        'book_id',
+        'id_peminjaman',
+        'id_buku',
     ];
 
     public function loan(): BelongsTo
     {
-        return $this->belongsTo(Loan::class);
+        return $this->belongsTo(Loan::class, 'id_peminjaman', 'id_peminjaman');
     }
 
     public function book(): BelongsTo
     {
-        return $this->belongsTo(Book::class);
+        return $this->belongsTo(Book::class, 'id_buku', 'id_buku');
     }
 }

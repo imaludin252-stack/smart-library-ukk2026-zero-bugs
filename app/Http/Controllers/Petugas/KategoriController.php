@@ -40,7 +40,7 @@ class KategoriController extends Controller
     public function update(Request $request, Category $category): RedirectResponse
     {
         $data = $request->validate([
-            'nama' => ['required', 'string', 'max:100', Rule::unique('categories', 'nama')->ignore($category->id)],
+            'nama' => ['required', 'string', 'max:100', Rule::unique('categories', 'nama')->ignore($category->getKey())],
             'deskripsi' => ['nullable', 'string', 'max:255'],
         ], [], ['nama' => 'nama kategori']);
 

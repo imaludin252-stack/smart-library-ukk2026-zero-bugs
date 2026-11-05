@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('loan_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('loan_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
+            $table->id('id_item');
+            $table->foreignId('id_peminjaman')->constrained('loans', 'id_peminjaman')->cascadeOnDelete();
+            $table->foreignId('id_buku')->constrained('books', 'id_buku')->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['loan_id', 'book_id']);
+            $table->unique(['id_peminjaman', 'id_buku']);
         });
     }
 

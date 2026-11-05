@@ -18,7 +18,7 @@ class BerandaController extends Controller
 
         abort_unless($member, 403, 'Akun Anda tidak terhubung dengan data anggota.');
 
-        Loan::segarkanKeterlambatan($member->id);
+        Loan::segarkanKeterlambatan($member->id_anggota);
 
         $pinjamanAktif = Loan::untukMember($member)
             ->with(['books.authors', 'books.kategori'])
@@ -37,7 +37,7 @@ class BerandaController extends Controller
 
         $batasPinjam = (int) Setting::get('batas_pinjam_aktif', 3);
 
-        $dipinjamIds = $pinjamanAktif->pluck('id');
+        $dipinjamIds = $pinjamanAktif->pluck('id_buku');
 
         $populer = Book::query()
             ->with(['authors', 'kategori'])

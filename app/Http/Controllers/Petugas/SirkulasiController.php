@@ -51,12 +51,12 @@ class SirkulasiController extends Controller
     public function pinjam(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'member_id' => ['required', 'exists:members,id'],
-            'book_id' => ['required', 'exists:books,id'],
+            'id_anggota' => ['required', 'exists:members,id_anggota'],
+            'id_buku' => ['required', 'exists:books,id_buku'],
         ]);
 
-        $member = Member::with('user')->findOrFail($data['member_id']);
-        $book = Book::findOrFail($data['book_id']);
+        $member = Member::with('user')->findOrFail($data['id_anggota']);
+        $book = Book::findOrFail($data['id_buku']);
 
         if (! $member->user->isAktif() || $member->status !== 'aktif') {
             return back()->with('error', 'Anggota '.$member->nama.' sedang tidak aktif.');
@@ -79,13 +79,13 @@ class SirkulasiController extends Controller
 
         $loan = Loan::create([
             'kode_transaksi' => Loan::generateKodeTransaksi(),
-            'member_id' => $member->id,
-            'petugas_id' => $request->user()->id,
+            'id_anggota' => $member->id_anggota,
+            'id_user' => $request->user()->id_user,
             'tanggal_pinjam' => now()->toDateString(),
             'tanggal_jatuh_tempo' => now()->addDays($durasi)->toDateString(),
             'status' => Loan::STATUS_DIPINJAM,
         ]);
-        $loan->books()->attach($book->id);
+        $loan->books()->attach($book->id_buku);
 
         return redirect()->route('petugas.sirkulasi.index')
             ->with('success', 'Peminjaman '.$loan->kode_transaksi.' untuk '.$member->nama.' berhasil dicatat.');
