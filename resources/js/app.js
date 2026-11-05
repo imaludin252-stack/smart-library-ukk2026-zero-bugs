@@ -96,4 +96,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if (konfirmasi) konfirmasi.disabled = !setuju.checked;
         });
     }
+
+    // ---- Anti double-click & indikator proses (S3-07) ----
+    document.querySelectorAll('form').forEach((form) => {
+        if ((form.getAttribute('method') || '').toUpperCase() !== 'POST') return;
+
+        form.addEventListener('submit', (event) => {
+            // Hormati dialog konfirmasi yang sudah membatalkan pengiriman.
+            if (event.defaultPrevented) return;
+
+            const btn = event.submitter || form.querySelector('button[type="submit"], input[type="submit"]');
+            if (!btn || btn.dataset.submitting === '1') return;
+
+            btn.dataset.submitting = '1';
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+
+            if (btn.tagName === 'BUTTON') {
+                btn.innerHTML = '<span class="inline-flex items-center gap-2"><span class="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent"></span>Memproses…</span>';
+            } else {
+                btn.value = 'Memproses…';
+            }
+        });
+    });
 });

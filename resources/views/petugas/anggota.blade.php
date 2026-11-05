@@ -3,6 +3,8 @@
 @section('title', 'Data Anggota Siswa')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Data Anggota']]" />
+
     <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
             <h1 class="page-title">Data Anggota Siswa</h1>
@@ -100,7 +102,7 @@
                                 <td><x-status-badge :status="$member->status" /></td>
                                 <td>
                                     <div class="flex justify-end gap-1.5">
-                                        <button type="button" data-modal-toggle="edit-anggota-{{ $member->id }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
+                                        <button type="button" data-modal-toggle="edit-anggota-{{ $member->id_anggota }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
                                         <form method="POST" action="{{ route('petugas.anggota.destroy', $member) }}" data-confirm="Hapus data anggota '{{ $member->nama }}'?">
                                             @csrf @method('DELETE')
                                             <button class="btn btn-danger-ghost btn-sm"><x-icon name="trash" class="h-3.5 w-3.5" /></button>
@@ -166,49 +168,49 @@
 
     {{-- Modal edit per anggota --}}
     @foreach ($members as $member)
-        <div data-modal="edit-anggota-{{ $member->id }}" class="modal-backdrop hidden">
+        <div data-modal="edit-anggota-{{ $member->id_anggota }}" class="modal-backdrop hidden">
             <div class="modal-panel">
                 <form method="POST" action="{{ route('petugas.anggota.update', $member) }}">
                     @csrf @method('PUT')
                     <div class="flex items-center justify-between border-b border-[var(--color-line)] p-5">
                         <h3 class="section-title">Ubah Data Anggota</h3>
-                        <button type="button" data-modal-close="edit-anggota-{{ $member->id }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
+                        <button type="button" data-modal-close="edit-anggota-{{ $member->id_anggota }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
                     </div>
                     <div class="grid gap-4 p-5 sm:grid-cols-2">
                         <div class="sm:col-span-2">
-                            <label class="field-label" for="e-name-{{ $member->id }}">Nama Lengkap</label>
-                            <input id="e-name-{{ $member->id }}" name="name" type="text" value="{{ $member->nama }}" class="input" required>
+                            <label class="field-label" for="e-name-{{ $member->id_anggota }}">Nama Lengkap</label>
+                            <input id="e-name-{{ $member->id_anggota }}" name="name" type="text" value="{{ $member->nama }}" class="input" required>
                         </div>
                         <div>
-                            <label class="field-label" for="e-email-{{ $member->id }}">Email</label>
-                            <input id="e-email-{{ $member->id }}" name="email" type="email" value="{{ $member->user->email }}" class="input" required>
+                            <label class="field-label" for="e-email-{{ $member->id_anggota }}">Email</label>
+                            <input id="e-email-{{ $member->id_anggota }}" name="email" type="email" value="{{ $member->user->email }}" class="input" required>
                         </div>
                         <div>
-                            <label class="field-label" for="e-nisn-{{ $member->id }}">NISN</label>
-                            <input id="e-nisn-{{ $member->id }}" name="nisn" type="text" value="{{ $member->nisn }}" class="input text-mono" required>
+                            <label class="field-label" for="e-nisn-{{ $member->id_anggota }}">NISN</label>
+                            <input id="e-nisn-{{ $member->id_anggota }}" name="nisn" type="text" value="{{ $member->nisn }}" class="input text-mono" required>
                         </div>
                         <div>
-                            <label class="field-label" for="e-kelas-{{ $member->id }}">Kelas</label>
-                            <input id="e-kelas-{{ $member->id }}" name="kelas" type="text" value="{{ $member->kelas }}" class="input" required>
+                            <label class="field-label" for="e-kelas-{{ $member->id_anggota }}">Kelas</label>
+                            <input id="e-kelas-{{ $member->id_anggota }}" name="kelas" type="text" value="{{ $member->kelas }}" class="input" required>
                         </div>
                         <div>
-                            <label class="field-label" for="e-jurusan-{{ $member->id }}">Jurusan</label>
-                            <select id="e-jurusan-{{ $member->id }}" name="jurusan" class="select" required>
+                            <label class="field-label" for="e-jurusan-{{ $member->id_anggota }}">Jurusan</label>
+                            <select id="e-jurusan-{{ $member->id_anggota }}" name="jurusan" class="select" required>
                                 @foreach ($jurusanList as $jurusan)
                                     <option value="{{ $jurusan }}" @selected($member->jurusan === $jurusan)>{{ $jurusan }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="field-label" for="e-status-{{ $member->id }}">Status Keanggotaan</label>
-                            <select id="e-status-{{ $member->id }}" name="status" class="select" required>
+                            <label class="field-label" for="e-status-{{ $member->id_anggota }}">Status Keanggotaan</label>
+                            <select id="e-status-{{ $member->id_anggota }}" name="status" class="select" required>
                                 <option value="aktif" @selected($member->status === 'aktif')>Aktif</option>
                                 <option value="nonaktif" @selected($member->status === 'nonaktif')>Nonaktif</option>
                             </select>
                         </div>
                     </div>
                     <div class="flex justify-end gap-2 border-t border-[var(--color-line)] p-5">
-                        <button type="button" data-modal-close="edit-anggota-{{ $member->id }}" class="btn btn-ghost">Batal</button>
+                        <button type="button" data-modal-close="edit-anggota-{{ $member->id_anggota }}" class="btn btn-ghost">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>
                 </form>

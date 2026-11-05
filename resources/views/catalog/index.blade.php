@@ -3,6 +3,8 @@
 @section('title', 'Katalog Buku')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Katalog Buku']]" />
+
     <section class="mb-6 rounded-[var(--radius-card)] bg-white p-6 shadow-[var(--shadow-card)] md:p-8">
         <span class="badge badge-info">SISTEM SIRKULASI &amp; KOLEKSI TERPADU</span>
         <h1 class="page-title mt-3">Katalog Buku Perpustakaan</h1>
@@ -23,7 +25,7 @@
                 <select name="kategori" class="select lg:w-56">
                     <option value="">Semua Kategori</option>
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" @selected((string) $filters['kategori'] === (string) $category->id)>{{ $category->nama }}</option>
+                        <option value="{{ $category->id_kategori }}" @selected((string) $filters['kategori'] === (string) $category->id_kategori)>{{ $category->nama }}</option>
                     @endforeach
                 </select>
                 <select name="jurusan" class="select lg:w-44">

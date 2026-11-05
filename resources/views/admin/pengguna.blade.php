@@ -3,6 +3,8 @@
 @section('title', 'Manajemen Pengguna')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Manajemen Pengguna']]" />
+
     <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
             <h1 class="page-title">Manajemen Pengguna</h1>
@@ -101,7 +103,7 @@
                                         @if ($user->isSiswa())
                                             <span class="self-center text-[11px] font-semibold text-[var(--color-ink-muted)]">Kelola via Data Anggota</span>
                                         @else
-                                            <button type="button" data-modal-toggle="edit-user-{{ $user->id }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
+                                            <button type="button" data-modal-toggle="edit-user-{{ $user->id_user }}" class="btn btn-secondary btn-sm"><x-icon name="pencil" class="h-3.5 w-3.5" /></button>
                                             <form method="POST" action="{{ route('admin.pengguna.status', $user) }}">
                                                 @csrf @method('PATCH')
                                                 <button class="btn {{ $user->isAktif() ? 'btn-ghost' : 'btn-success' }} btn-sm" title="{{ $user->isAktif() ? 'Nonaktifkan' : 'Aktifkan' }}">
@@ -167,41 +169,41 @@
     {{-- Modal edit --}}
     @foreach ($users as $user)
         @unless ($user->isSiswa())
-            <div data-modal="edit-user-{{ $user->id }}" class="modal-backdrop hidden">
+            <div data-modal="edit-user-{{ $user->id_user }}" class="modal-backdrop hidden">
                 <div class="modal-panel">
                     <form method="POST" action="{{ route('admin.pengguna.update', $user) }}">
                         @csrf @method('PUT')
                         <div class="flex items-center justify-between border-b border-[var(--color-line)] p-5">
                             <h3 class="section-title">Ubah Pengguna</h3>
-                            <button type="button" data-modal-close="edit-user-{{ $user->id }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
+                            <button type="button" data-modal-close="edit-user-{{ $user->id_user }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
                         </div>
                         <div class="grid gap-4 p-5 sm:grid-cols-2">
                             <div class="sm:col-span-2">
-                                <label class="field-label" for="u-name-{{ $user->id }}">Nama Lengkap</label>
-                                <input id="u-name-{{ $user->id }}" name="name" type="text" value="{{ $user->name }}" class="input" required>
+                                <label class="field-label" for="u-name-{{ $user->id_user }}">Nama Lengkap</label>
+                                <input id="u-name-{{ $user->id_user }}" name="name" type="text" value="{{ $user->name }}" class="input" required>
                             </div>
                             <div>
-                                <label class="field-label" for="u-email-{{ $user->id }}">Email</label>
-                                <input id="u-email-{{ $user->id }}" name="email" type="email" value="{{ $user->email }}" class="input" required>
+                                <label class="field-label" for="u-email-{{ $user->id_user }}">Email</label>
+                                <input id="u-email-{{ $user->id_user }}" name="email" type="email" value="{{ $user->email }}" class="input" required>
                             </div>
                             <div>
-                                <label class="field-label" for="u-role-{{ $user->id }}">Peran</label>
-                                <select id="u-role-{{ $user->id }}" name="role" class="select" required>
+                                <label class="field-label" for="u-role-{{ $user->id_user }}">Peran</label>
+                                <select id="u-role-{{ $user->id_user }}" name="role" class="select" required>
                                     @foreach ($roles as $value => $label)
                                         <option value="{{ $value }}" @selected($user->role === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="sm:col-span-2">
-                                <label class="field-label" for="u-status-{{ $user->id }}">Status</label>
-                                <select id="u-status-{{ $user->id }}" name="status" class="select" required>
+                                <label class="field-label" for="u-status-{{ $user->id_user }}">Status</label>
+                                <select id="u-status-{{ $user->id_user }}" name="status" class="select" required>
                                     <option value="aktif" @selected($user->isAktif())>Aktif</option>
                                     <option value="nonaktif" @selected(! $user->isAktif())>Nonaktif</option>
                                 </select>
                             </div>
                         </div>
                         <div class="flex justify-end gap-2 border-t border-[var(--color-line)] p-5">
-                            <button type="button" data-modal-close="edit-user-{{ $user->id }}" class="btn btn-ghost">Batal</button>
+                            <button type="button" data-modal-close="edit-user-{{ $user->id_user }}" class="btn btn-ghost">Batal</button>
                             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                         </div>
                     </form>

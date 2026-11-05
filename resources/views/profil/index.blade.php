@@ -3,6 +3,8 @@
 @section('title', 'Profil Saya')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Profil Saya']]" />
+
     @php $isSiswaProfil = $user->isSiswa(); @endphp
 
     <div class="mb-5">

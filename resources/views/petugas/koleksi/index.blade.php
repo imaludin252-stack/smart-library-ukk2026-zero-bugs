@@ -3,6 +3,8 @@
 @section('title', 'Data Koleksi Buku')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Koleksi Buku']]" />
+
     <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
             <h1 class="page-title">Data Koleksi Buku</h1>
@@ -31,7 +33,7 @@
                 <select id="kategori" name="kategori" class="select">
                     <option value="">Semua Kategori</option>
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" @selected((string) $filters['kategori'] === (string) $category->id)>{{ $category->nama }}</option>
+                        <option value="{{ $category->id_kategori }}" @selected((string) $filters['kategori'] === (string) $category->id_kategori)>{{ $category->nama }}</option>
                     @endforeach
                 </select>
             </div>

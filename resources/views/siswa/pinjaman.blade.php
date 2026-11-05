@@ -3,6 +3,8 @@
 @section('title', 'Peminjaman Saya')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Peminjaman Saya']]" />
+
     @php
         $tabs = [
             'semua' => ['label' => 'Semua', 'count' => $jumlahAktif + $jumlahVerifikasi + $jumlahSelesai + $jumlahTerlambat],

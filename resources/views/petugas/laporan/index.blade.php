@@ -3,6 +3,8 @@
 @section('title', 'Laporan & Rekap')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Laporan & Rekap']]" />
+
     <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
             <h1 class="page-title">Laporan &amp; Rekap</h1>

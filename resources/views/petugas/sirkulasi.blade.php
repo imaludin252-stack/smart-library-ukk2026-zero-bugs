@@ -3,6 +3,8 @@
 @section('title', 'Meja Sirkulasi')
 
 @section('content')
+    <x-breadcrumb :items="[['label' => 'Meja Sirkulasi']]" />
+
     <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
             <h1 class="page-title">Meja Sirkulasi</h1>
@@ -52,27 +54,27 @@
                                     @csrf @method('PATCH')
                                     <button class="btn btn-success"><x-icon name="check" class="h-4 w-4" /> Serahkan Buku</button>
                                 </form>
-                                <button type="button" data-modal-toggle="tolak-{{ $loan->id }}" class="btn btn-danger-ghost">
+                                <button type="button" data-modal-toggle="tolak-{{ $loan->id_peminjaman }}" class="btn btn-danger-ghost">
                                     <x-icon name="x" class="h-4 w-4" /> Tolak
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div data-modal="tolak-{{ $loan->id }}" class="modal-backdrop hidden">
+                    <div data-modal="tolak-{{ $loan->id_peminjaman }}" class="modal-backdrop hidden">
                         <div class="modal-panel">
                             <form method="POST" action="{{ route('petugas.sirkulasi.tolak', $loan) }}">
                                 @csrf @method('PATCH')
                                 <div class="flex items-start justify-between border-b border-[var(--color-line)] p-5">
                                     <h3 class="section-title">Tolak Permohonan {{ $loan->kode_transaksi }}</h3>
-                                    <button type="button" data-modal-close="tolak-{{ $loan->id }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
+                                    <button type="button" data-modal-close="tolak-{{ $loan->id_peminjaman }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
                                 </div>
                                 <div class="p-5">
-                                    <label class="field-label" for="alasan-{{ $loan->id }}">Alasan Penolakan</label>
-                                    <textarea id="alasan-{{ $loan->id }}" name="alasan" class="textarea" placeholder="Contoh: stok fisik sedang diperbaiki.">{{ old('alasan') }}</textarea>
+                                    <label class="field-label" for="alasan-{{ $loan->id_peminjaman }}">Alasan Penolakan</label>
+                                    <textarea id="alasan-{{ $loan->id_peminjaman }}" name="alasan" class="textarea" placeholder="Contoh: stok fisik sedang diperbaiki.">{{ old('alasan') }}</textarea>
                                 </div>
                                 <div class="flex justify-end gap-2 border-t border-[var(--color-line)] p-5">
-                                    <button type="button" data-modal-close="tolak-{{ $loan->id }}" class="btn btn-ghost">Batal</button>
+                                    <button type="button" data-modal-close="tolak-{{ $loan->id_peminjaman }}" class="btn btn-ghost">Batal</button>
                                     <button type="submit" class="btn btn-danger"><x-icon name="x" class="h-4 w-4" /> Tolak Permohonan</button>
                                 </div>
                             </form>
@@ -116,7 +118,7 @@
                                     <td class="text-[12px] {{ $loan->isTerlambat() ? 'font-bold text-[var(--color-danger)]' : '' }}">{{ $loan->tanggal_jatuh_tempo->translatedFormat('d M Y') }}</td>
                                     <td><x-status-badge :status="$loan->status" /></td>
                                     <td class="text-right">
-                                        <button type="button" data-modal-toggle="kembali-{{ $loan->id }}" class="btn btn-primary btn-sm">
+                                        <button type="button" data-modal-toggle="kembali-{{ $loan->id_peminjaman }}" class="btn btn-primary btn-sm">
                                             <x-icon name="refresh" class="h-3.5 w-3.5" /> Kembalikan
                                         </button>
                                     </td>
@@ -129,7 +131,7 @@
 
             @foreach ($aktif as $loan)
                 @php $b = $loan->books->first(); @endphp
-                <div data-modal="kembali-{{ $loan->id }}" class="modal-backdrop hidden">
+                <div data-modal="kembali-{{ $loan->id_peminjaman }}" class="modal-backdrop hidden">
                     <div class="modal-panel">
                         <form method="POST" action="{{ route('petugas.sirkulasi.kembalikan', $loan) }}">
                             @csrf @method('PATCH')
@@ -138,7 +140,7 @@
                                     <h3 class="section-title">Proses Pengembalian</h3>
                                     <p class="text-mono mt-1 text-[12px] text-[var(--color-ink-muted)]">{{ $loan->kode_transaksi }} · {{ $loan->member->nama }}</p>
                                 </div>
-                                <button type="button" data-modal-close="kembali-{{ $loan->id }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
+                                <button type="button" data-modal-close="kembali-{{ $loan->id_peminjaman }}" class="rounded-lg p-1.5 hover:bg-[var(--color-primary-50)]"><x-icon name="x" class="h-5 w-5" /></button>
                             </div>
                             <div class="space-y-4 p-5">
                                 <div class="rounded-xl bg-[var(--color-primary-50)] p-4">
@@ -151,13 +153,13 @@
                                 </div>
                                 <div class="grid gap-4 sm:grid-cols-2">
                                     <div>
-                                        <label class="field-label" for="denda-{{ $loan->id }}">Denda (Rp)</label>
-                                        <input id="denda-{{ $loan->id }}" name="denda" type="number" min="0" value="{{ $loan->hitungDenda() }}" class="input text-mono" required>
+                                        <label class="field-label" for="denda-{{ $loan->id_peminjaman }}">Denda (Rp)</label>
+                                        <input id="denda-{{ $loan->id_peminjaman }}" name="denda" type="number" min="0" value="{{ $loan->hitungDenda() }}" class="input text-mono" required>
                                         <p class="mt-1 text-[11px] text-[var(--color-ink-muted)]">Tarif Rp {{ number_format($tarifDenda, 0, ',', '.') }}/hari. Isi 0 bila tidak ada denda.</p>
                                     </div>
                                     <div>
-                                        <label class="field-label" for="kondisi-{{ $loan->id }}">Kondisi Buku</label>
-                                        <select id="kondisi-{{ $loan->id }}" name="kondisi_buku" class="select" required>
+                                        <label class="field-label" for="kondisi-{{ $loan->id_peminjaman }}">Kondisi Buku</label>
+                                        <select id="kondisi-{{ $loan->id_peminjaman }}" name="kondisi_buku" class="select" required>
                                             <option value="baik">Baik</option>
                                             <option value="rusak_ringan">Rusak Ringan</option>
                                             <option value="rusak_berat">Rusak Berat</option>
@@ -165,13 +167,13 @@
                                         </select>
                                     </div>
                                     <div class="sm:col-span-2">
-                                        <label class="field-label" for="catatan-{{ $loan->id }}">Catatan (opsional)</label>
-                                        <input id="catatan-{{ $loan->id }}" name="catatan" type="text" class="input" placeholder="Mis. sampul sedikit lecet.">
+                                        <label class="field-label" for="catatan-{{ $loan->id_peminjaman }}">Catatan (opsional)</label>
+                                        <input id="catatan-{{ $loan->id_peminjaman }}" name="catatan" type="text" class="input" placeholder="Mis. sampul sedikit lecet.">
                                     </div>
                                 </div>
                             </div>
                             <div class="flex justify-end gap-2 border-t border-[var(--color-line)] p-5">
-                                <button type="button" data-modal-close="kembali-{{ $loan->id }}" class="btn btn-ghost">Batal</button>
+                                <button type="button" data-modal-close="kembali-{{ $loan->id_peminjaman }}" class="btn btn-ghost">Batal</button>
                                 <button type="submit" class="btn btn-primary"><x-icon name="check" class="h-4 w-4" /> Konfirmasi Pengembalian</button>
                             </div>
                         </form>
@@ -231,20 +233,20 @@
                 </div>
                 <div class="space-y-4 p-5">
                     <div>
-                        <label class="field-label" for="member_id">Anggota Peminjam</label>
-                        <select id="member_id" name="member_id" class="select" required>
+                        <label class="field-label" for="id_anggota">Anggota Peminjam</label>
+                        <select id="id_anggota" name="id_anggota" class="select" required>
                             <option value="">Pilih anggota…</option>
                             @foreach ($members as $member)
-                                <option value="{{ $member->id }}" @selected(old('member_id') == $member->id)>{{ $member->nama }} — {{ $member->kelas }} ({{ $member->nisn }})</option>
+                                <option value="{{ $member->id_anggota }}" @selected(old('id_anggota') == $member->id_anggota)>{{ $member->nama }} — {{ $member->kelas }} ({{ $member->nisn }})</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="field-label" for="book_id">Buku</label>
-                        <select id="book_id" name="book_id" class="select" required>
+                        <label class="field-label" for="id_buku">Buku</label>
+                        <select id="id_buku" name="id_buku" class="select" required>
                             <option value="">Pilih buku…</option>
                             @foreach ($books as $book)
-                                <option value="{{ $book->id }}" @selected(old('book_id') == $book->id)>{{ $book->judul }} ({{ $book->kode_buku }}) — sisa {{ $book->tersedia() }}</option>
+                                <option value="{{ $book->id_buku }}" @selected(old('id_buku') == $book->id_buku)>{{ $book->judul }} ({{ $book->kode_buku }}) — sisa {{ $book->tersedia() }}</option>
                             @endforeach
                         </select>
                     </div>
