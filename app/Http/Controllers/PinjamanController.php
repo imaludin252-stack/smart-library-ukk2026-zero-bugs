@@ -8,6 +8,7 @@ use App\Models\Member;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class PinjamanController extends Controller
@@ -18,7 +19,7 @@ class PinjamanController extends Controller
         $member = $request->user()->member;
         abort_unless($member, 403);
 
-        Loan::segarkanKeterlambatan($member->id);
+        Loan::segarkanKeterlambatan($member->id_anggota);
 
         $tab = $request->query('tab', 'semua');
         $batas = (int) Setting::get('batas_pinjam_aktif', 3);
@@ -61,10 +62,10 @@ class PinjamanController extends Controller
         abort_unless($member, 403);
 
         $data = $request->validate([
-            'book_id' => ['required', 'exists:books,id'],
+            'id_buku' => ['required', 'exists:books,id_buku'],
         ]);
 
-        $book = Book::findOrFail($data['book_id']);
+        $book = Book::findOrFail($data['id_buku']);
 
         if ($book->isNonaktif()) {
             return back()->with('error', 'Buku ini sedang dinonaktifkan dan tidak dapat dipinjam.');
@@ -93,7 +94,7 @@ class PinjamanController extends Controller
         // Tidak boleh mengajukan buku yang sama dua kali.
         $sudahAda = Loan::untukMember($member)
             ->whereIn('status', Loan::STATUS_AKTIF)
-            ->whereHas('books', fn ($q) => $q->where('books.id', $book->id))
+            ->whereHas('books', fn ($q) => $q->where('books.id_buku', $book->id_buku))
             ->exists();
 
         if ($sudahAda) {
@@ -123,16 +124,17 @@ class PinjamanController extends Controller
     {
         $this->autoritaskan($request, $loan);
 
+        // BUG-05: periksa keterlambatan lebih dulu agar pesan yang muncul akurat.
+        if ($loan->isTerlambat()) {
+            return back()->with('error', 'Pinjaman yang sudah terlambat tidak dapat diperpanjang.');
+        }
+
         if (! $loan->isDipinjam()) {
             return back()->with('error', 'Pinjaman ini tidak dapat diperpanjang.');
         }
 
         if ($loan->sudah_diperpanjang) {
             return back()->with('error', 'Pinjaman ini sudah pernah diperpanjang.');
-        }
-
-        if ($loan->isTerlambat()) {
-            return back()->with('error', 'Pinjaman yang sudah terlambat tidak dapat diperpanjang.');
         }
 
         $loan->perpanjang();
@@ -142,7 +144,7 @@ class PinjamanController extends Controller
 
     private function autoritaskan(Request $request, Loan $loan): void
     {
-        $member = $request->user()->member;
-        abort_unless($member && $loan->member_id === $member->id, 403, 'Anda tidak berhak mengakses transaksi ini.');
+        // S3-01: verifikasi kepemilikan data lewat Policy (anti-IDOR).
+        Gate::authorize('view', $loan);
     }
 }
