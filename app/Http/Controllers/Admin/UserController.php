@@ -78,16 +78,16 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:150', Rule::unique('users', 'email')->ignore($user->id)],
+            'email' => ['required', 'string', 'email', 'max:150', Rule::unique('users', 'email')->ignore($user->getKey())],
             'role' => ['required', Rule::in([User::ROLE_PETUGAS, User::ROLE_ADMIN])],
             'status' => ['required', Rule::in([User::STATUS_AKTIF, User::STATUS_NONAKTIF])],
         ], [], ['name' => 'nama lengkap', 'role' => 'peran']);
 
-        if ($user->id === $request->user()->id && $data['status'] === User::STATUS_NONAKTIF) {
+        if ($user->id_user === $request->user()->id_user && $data['status'] === User::STATUS_NONAKTIF) {
             return back()->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri.');
         }
 
-        if ($user->id === $request->user()->id && $data['role'] !== User::ROLE_ADMIN) {
+        if ($user->id_user === $request->user()->id_user && $data['role'] !== User::ROLE_ADMIN) {
             return back()->with('error', 'Anda tidak dapat mengubah peran akun Anda sendiri.');
         }
 
@@ -98,7 +98,7 @@ class UserController extends Controller
 
     public function toggleStatus(Request $request, User $user): RedirectResponse
     {
-        if ($user->id === $request->user()->id) {
+        if ($user->id_user === $request->user()->id_user) {
             return back()->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri.');
         }
 
@@ -111,12 +111,18 @@ class UserController extends Controller
 
     public function destroy(Request $request, User $user): RedirectResponse
     {
-        if ($user->id === $request->user()->id) {
+        if ($user->id_user === $request->user()->id_user) {
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
-        if (Loan::where('petugas_id', $user->id)->exists()) {
+        if (Loan::where('id_user', $user->id_user)->exists()) {
             return back()->with('error', 'Akun ini memiliki riwayat transaksi. Nonaktifkan akun sebagai gantinya.');
+        }
+
+        // BUG-04: akun siswa yang punya profil anggota juga tidak boleh dihapus
+        // jika member tersebut memiliki riwayat pinjaman (cascade loans).
+        if ($user->member?->loans()->exists()) {
+            return back()->with('error', 'Akun siswa ini memiliki riwayat pinjaman. Nonaktifkan akun sebagai gantinya.');
         }
 
         $nama = $user->name;

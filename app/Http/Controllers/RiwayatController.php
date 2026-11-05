@@ -78,6 +78,21 @@ class RiwayatController extends Controller
         $member = $request->user()->member;
         abort_unless($member, 403);
 
+        Loan::segarkanKeterlambatan($member->id_anggota);
+
+        // BUG-01: surat bebas pustaka tidak boleh terbit jika masih ada
+        // pinjaman berjalan atau keterlambatan (bukan sekadar diajukan).
+        $masihAktif = Loan::untukMember($member)
+            ->whereIn('status', Loan::STATUS_AKTIF)
+            ->where('status', '!=', Loan::STATUS_DIAJUKAN)
+            ->exists();
+
+        abort_if(
+            $member->punyaKeterlambatan() || $masihAktif,
+            403,
+            'Surat bebas pustaka belum dapat diterbitkan. Selesaikan seluruh pinjaman aktif dan denda terlebih dahulu.'
+        );
+
         $semua = Loan::untukMember($member)->whereNotNull('tanggal_kembali');
 
         $pdf = Pdf::loadView('reports.bebas-pustaka', [

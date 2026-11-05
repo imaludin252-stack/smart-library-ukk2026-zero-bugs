@@ -24,7 +24,7 @@ class LaporanController extends Controller
             ->whereDate('tanggal_pinjam', '<=', $sampai);
 
         $totalTransaksi = (clone $base)->count();
-        $siswaAktif = (clone $base)->distinct('member_id')->count('member_id');
+        $siswaAktif = (clone $base)->distinct('id_anggota')->count('id_anggota');
         $dendaTerkumpul = (int) (clone $base)->sum('denda');
         $totalSelesai = (clone $base)->whereNotNull('tanggal_kembali')->count();
         $totalTerlambat = (clone $base)->where('denda', '>', 0)->count();
@@ -56,7 +56,7 @@ class LaporanController extends Controller
         $maxPopuler = max(1, (int) $bukuPopuler->max('total_pinjam'));
 
         $rekapKelas = DB::table('loans')
-            ->join('members', 'members.id', '=', 'loans.member_id')
+            ->join('members', 'members.id_anggota', '=', 'loans.id_anggota')
             ->whereDate('loans.tanggal_pinjam', '>=', $dari)
             ->whereDate('loans.tanggal_pinjam', '<=', $sampai)
             ->select('members.kelas', DB::raw('count(*) as total'))
@@ -65,7 +65,7 @@ class LaporanController extends Controller
             ->get();
 
         $distribusiJurusan = DB::table('loans')
-            ->join('members', 'members.id', '=', 'loans.member_id')
+            ->join('members', 'members.id_anggota', '=', 'loans.id_anggota')
             ->whereDate('loans.tanggal_pinjam', '>=', $dari)
             ->whereDate('loans.tanggal_pinjam', '<=', $sampai)
             ->select('members.jurusan', DB::raw('count(*) as total'))
@@ -95,7 +95,12 @@ class LaporanController extends Controller
     public function pdf(Request $request): Response
     {
         [$dari, $sampai] = $this->periode($request);
+
+        // BUG-06: tolak nilai jenis yang tidak dikenal agar tidak salah laporan.
         $jenis = $request->query('jenis', 'transaksi');
+        if (! in_array($jenis, ['transaksi', 'terlambat', 'populer'], true)) {
+            $jenis = 'transaksi';
+        }
 
         $judul = match ($jenis) {
             'terlambat' => 'Laporan Buku Terlambat',
@@ -159,6 +164,11 @@ class LaporanController extends Controller
         } catch (\Throwable) {
             $dari = now()->startOfMonth()->toDateString();
             $sampai = now()->toDateString();
+        }
+
+        // BUG-06: rentang terbalik ditukar agar laporan tetap masuk akal.
+        if ($dari > $sampai) {
+            [$dari, $sampai] = [$sampai, $dari];
         }
 
         return [$dari, $sampai];

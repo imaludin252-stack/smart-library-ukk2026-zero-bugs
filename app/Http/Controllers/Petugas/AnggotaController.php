@@ -81,7 +81,7 @@ class AnggotaController extends Controller
             ]);
 
             Member::create([
-                'user_id' => $user->id,
+                'id_user' => $user->id_user,
                 'nisn' => $data['nisn'],
                 'kelas' => $data['kelas'],
                 'jurusan' => $data['jurusan'],
@@ -96,8 +96,8 @@ class AnggotaController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:150', Rule::unique('users', 'email')->ignore($member->user_id)],
-            'nisn' => ['required', 'string', 'digits_between:6,20', Rule::unique('members', 'nisn')->ignore($member->id)],
+            'email' => ['required', 'string', 'email', 'max:150', Rule::unique('users', 'email')->ignore($member->id_user)],
+            'nisn' => ['required', 'string', 'digits_between:6,20', Rule::unique('members', 'nisn')->ignore($member->getKey())],
             'kelas' => ['required', 'string', 'max:30'],
             'jurusan' => ['required', 'in:RPL,TKJ,AKL,OTKP'],
             'status' => ['required', 'in:aktif,nonaktif'],
@@ -128,6 +128,11 @@ class AnggotaController extends Controller
     {
         if ($member->loans()->whereIn('status', Loan::STATUS_AKTIF)->exists()) {
             return back()->with('error', 'Anggota masih memiliki transaksi aktif. Nonaktifkan akun sebagai gantinya.');
+        }
+
+        // BUG-03: riwayat transaksi tidak boleh ikut terhapus (cascade loans).
+        if ($member->loans()->exists()) {
+            return back()->with('error', 'Anggota memiliki riwayat transaksi dan tidak boleh dihapus. Nonaktifkan akun sebagai gantinya.');
         }
 
         DB::transaction(function () use ($member) {

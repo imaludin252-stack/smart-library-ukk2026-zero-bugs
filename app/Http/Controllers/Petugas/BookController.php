@@ -38,7 +38,7 @@ class BookController extends Controller
         }
 
         if ($filters['kategori']) {
-            $query->where('kategori_id', $filters['kategori']);
+            $query->where('id_kategori', $filters['kategori']);
         }
 
         if ($filters['jurusan']) {
@@ -79,7 +79,10 @@ class BookController extends Controller
         $data = $this->validasi($request);
 
         DB::transaction(function () use ($data, $request) {
-            $book = Book::create($this->atribut($data));
+            $atribut = $this->atribut($data);
+            $atribut['cover_path'] = $this->simpanCover($request, null);
+
+            $book = Book::create($atribut);
             $this->sinkronPenulis($book, $request->input('penulis'));
         });
 
@@ -104,6 +107,11 @@ class BookController extends Controller
 
         DB::transaction(function () use ($book, $data, $request) {
             $book->update($this->atribut($data));
+
+            if ($request->hasFile('cover')) {
+                $book->update(['cover_path' => $this->simpanCover($request, $book)]);
+            }
+
             $this->sinkronPenulis($book, $request->input('penulis'));
         });
 
@@ -127,7 +135,21 @@ class BookController extends Controller
             return back()->with('error', 'Buku "'.$book->judul.'" masih memiliki transaksi aktif. Nonaktifkan buku sebagai gantinya.');
         }
 
+        // BUG-02: buku yang sudah memiliki riwayat transaksi tidak boleh dihapus
+        // karena akan menghapus loan_items (cascade) dan merusak laporan.
+        if ($book->loanItems()->exists()) {
+            return back()->with('error', 'Buku "'.$book->judul.'" memiliki riwayat transaksi dan tidak boleh dihapus. Nonaktifkan buku sebagai gantinya.');
+        }
+
         $judul = $book->judul;
+
+        if ($book->cover_path && str_starts_with($book->cover_path, 'covers/')) {
+            $berkas = public_path($book->cover_path);
+            if (is_file($berkas)) {
+                @unlink($berkas);
+            }
+        }
+
         $book->delete();
 
         return back()->with('success', 'Buku "'.$judul.'" berhasil dihapus dari katalog.');
@@ -137,9 +159,9 @@ class BookController extends Controller
     private function validasi(Request $request, ?Book $book = null): array
     {
         return $request->validate([
-            'kode_buku' => ['required', 'string', 'max:30', Rule::unique('books', 'kode_buku')->ignore($book?->id)],
+            'kode_buku' => ['required', 'string', 'max:30', Rule::unique('books', 'kode_buku')->ignore($book?->getKey())],
             'judul' => ['required', 'string', 'max:255'],
-            'kategori_id' => ['required', 'exists:categories,id'],
+            'id_kategori' => ['required', 'exists:categories,id_kategori'],
             'penulis' => ['nullable', 'string', 'max:255'],
             'penerbit' => ['nullable', 'string', 'max:255'],
             'tahun' => ['nullable', 'integer', 'between:1900,'.(date('Y') + 1)],
@@ -152,9 +174,11 @@ class BookController extends Controller
             'lokasi_rak' => ['nullable', 'string', 'max:50'],
             'stok' => ['required', 'integer', 'min:0', 'max:9999'],
             'status' => ['required', 'in:aktif,nonaktif'],
+            // S3-06: sanitasi unggahan sampul (MIME asli + ukuran + nama acak).
+            'cover' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:2048'],
         ], [], [
             'kode_buku' => 'kode buku',
-            'kategori_id' => 'kategori',
+            'id_kategori' => 'kategori',
             'jurusan' => 'program keahlian',
             'stok' => 'stok',
         ]);
@@ -163,7 +187,44 @@ class BookController extends Controller
     /** @param array<string, mixed> $data */
     private function atribut(array $data): array
     {
-        return collect($data)->except('penulis')->map(fn ($value) => $value === '' ? null : $value)->all();
+        return collect($data)->except(['penulis', 'cover'])->map(fn ($value) => $value === '' ? null : $value)->all();
+    }
+
+    /**
+     * Simpan sampul dengan nama acak dan ekstensi dari MIME asli (S3-06).
+     */
+    private function simpanCover(Request $request, ?Book $book): ?string
+    {
+        $file = $request->file('cover');
+
+        if (! $file) {
+            return $book?->cover_path;
+        }
+
+        $ekstensi = match ($file->getMimeType()) {
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            default => 'jpg',
+        };
+
+        $nama = 'cover_'.now()->format('YmdHis').'_'.bin2hex(random_bytes(8)).'.'.$ekstensi;
+        $tujuan = public_path('covers');
+
+        if (! is_dir($tujuan)) {
+            mkdir($tujuan, 0755, true);
+        }
+
+        $file->move($tujuan, $nama);
+
+        if ($book?->cover_path && str_starts_with($book->cover_path, 'covers/')) {
+            $lama = public_path($book->cover_path);
+            if (is_file($lama)) {
+                @unlink($lama);
+            }
+        }
+
+        return 'covers/'.$nama;
     }
 
     private function sinkronPenulis(Book $book, ?string $penulis): void
@@ -174,7 +235,7 @@ class BookController extends Controller
             ->unique()
             ->values();
 
-        $ids = $nama->map(fn ($n) => Author::firstOrCreate(['nama' => $n])->id);
+        $ids = $nama->map(fn ($n) => Author::firstOrCreate(['nama' => $n])->id_penulis);
 
         $book->authors()->sync($ids);
     }
