@@ -31,7 +31,7 @@ Route::view('/panduan', 'pages.panduan')->name('panduan');
 // ---------- Autentikasi ----------
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
-    Route::post('/login', [LoginController::class, 'store'])->name('login.attempt');
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login')->name('login.attempt');
     Route::get('/registrasi', [RegisterController::class, 'create'])->name('register');
     Route::post('/registrasi', [RegisterController::class, 'store'])->name('register.store');
 });

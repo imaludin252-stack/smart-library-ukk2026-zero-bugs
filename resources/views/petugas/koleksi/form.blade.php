@@ -26,7 +26,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ $edit ? route('petugas.koleksi.update', $book) : route('petugas.koleksi.store') }}" class="grid gap-5 lg:grid-cols-3">
+    <form method="POST" action="{{ $edit ? route('petugas.koleksi.update', $book) : route('petugas.koleksi.store') }}" enctype="multipart/form-data" class="grid gap-5 lg:grid-cols-3">
         @csrf
         @if ($edit) @method('PUT') @endif
 
@@ -43,11 +43,11 @@
                         <input id="kode_buku" name="kode_buku" type="text" value="{{ old('kode_buku', $book?->kode_buku) }}" class="input text-mono" placeholder="RPL-PWD-001" required>
                     </div>
                     <div>
-                        <label class="field-label" for="kategori_id">Kategori <span class="text-[var(--color-danger)]">*</span></label>
-                        <select id="kategori_id" name="kategori_id" class="select" required>
+                        <label class="field-label" for="id_kategori">Kategori <span class="text-[var(--color-danger)]">*</span></label>
+                        <select id="id_kategori" name="id_kategori" class="select" required>
                             <option value="">Pilih kategori…</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" @selected((string) old('kategori_id', $book?->kategori_id) === (string) $category->id)>{{ $category->nama }}</option>
+                                <option value="{{ $category->id_kategori }}" @selected((string) old('id_kategori', $book?->id_kategori) === (string) $category->id_kategori)>{{ $category->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -116,6 +116,20 @@
                             <option value="aktif" @selected(old('status', $book?->status ?? 'aktif') === 'aktif')>Aktif — dapat dipinjam</option>
                             <option value="nonaktif" @selected(old('status', $book?->status) === 'nonaktif')>Nonaktif — disembunyikan</option>
                         </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-pad">
+                <h2 class="section-title">Sampul Buku</h2>
+                <div class="mt-4 space-y-3">
+                    @if ($book?->cover_path)
+                        <x-cover :book="$book" class="aspect-[2/3] w-24" />
+                    @endif
+                    <div>
+                        <label class="field-label" for="cover">Unggah Gambar Sampul</label>
+                        <input id="cover" name="cover" type="file" accept="image/jpeg,image/png,image/webp" class="input text-[12px]">
+                        <p class="mt-1 text-[11px] leading-4 text-[var(--color-ink-muted)]">Format JPG, PNG, atau WebP. Ukuran maksimal 2 MB.</p>
                     </div>
                 </div>
             </div>

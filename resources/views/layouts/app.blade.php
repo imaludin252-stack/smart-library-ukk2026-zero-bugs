@@ -45,7 +45,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Smart Library') — Smart Library</title>
+    {{-- S3-06: escape judul halaman agar data pengguna tidak dieksekusi sebagai HTML. --}}
+    <title>{{ $__env->yieldContent('title', 'Smart Library') }} - Smart Library</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-[var(--color-bg-page)]">
