@@ -99,8 +99,8 @@
             <h2 class="section-title">Distribusi Koleksi per Program Keahlian</h2>
             <a href="{{ route('petugas.koleksi.index') }}" class="link text-[13px]">Kelola Koleksi</a>
         </div>
-        <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            @foreach (\App\Models\Book::JURUSAN as $jurusan)
+        <div class="mt-4 grid gap-4 sm:grid-cols-3">
+            @foreach ($programKeahlian as $jurusan)
                 @php $jumlah = (int) ($distribusi[$jurusan] ?? 0); @endphp
                 <div>
                     <div class="flex items-center justify-between text-[12px] font-semibold">
@@ -110,6 +110,9 @@
                     <div class="progress mt-2">
                         <div class="progress-bar" style="width: {{ ($jumlah / $maxDistribusi) * 100 }}%"></div>
                     </div>
+                    @if ($jumlah === 0)
+                        <p class="mt-1.5 text-[11px] text-[var(--color-ink-muted)]">Belum ada koleksi</p>
+                    @endif
                 </div>
             @endforeach
         </div>

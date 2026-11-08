@@ -12,6 +12,9 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    /** Program keahlian yang ditampilkan pada grafik distribusi koleksi. */
+    private const PROGRAM_KEAHLIAN = ['RPL', 'DKV', 'BDP'];
+
     public function __invoke(Request $request): View
     {
         Loan::segarkanKeterlambatan();
@@ -46,6 +49,7 @@ class DashboardController extends Controller
         $distribusi = Book::query()
             ->select('jurusan', DB::raw('sum(stok) as total'))
             ->where('status', Book::STATUS_AKTIF)
+            ->whereIn('jurusan', self::PROGRAM_KEAHLIAN)
             ->groupBy('jurusan')
             ->pluck('total', 'jurusan');
 
@@ -61,6 +65,7 @@ class DashboardController extends Controller
             'perhatian' => $perhatian,
             'distribusi' => $distribusi,
             'maxDistribusi' => $maxDistribusi,
+            'programKeahlian' => self::PROGRAM_KEAHLIAN,
             'petugas' => $request->user(),
             'tanggal' => Carbon::now()->translatedFormat('l, d F Y'),
         ]);
