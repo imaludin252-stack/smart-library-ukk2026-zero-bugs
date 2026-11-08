@@ -227,14 +227,17 @@ class Loan extends Model
         $this->update(['status' => self::STATUS_DIBATALKAN]);
     }
 
-    /** Proses pengembalian oleh petugas (BR-07). */
+    /**
+     * Proses pengembalian oleh petugas (BR-07).
+     *
+     * Status selalu menjadi "dikembalikan" agar transaksi keluar dari daftar
+     * pinjaman aktif. Keterlambatan tetap tercatat melalui nominal denda.
+     */
     public function kembalikan(User $petugas, int $denda, string $kondisi = 'baik', ?string $catatan = null): void
     {
         DB::transaction(function () use ($petugas, $denda, $kondisi, $catatan) {
-            $terlambat = now()->startOfDay()->gt($this->tanggal_jatuh_tempo->startOfDay());
-
             $this->update([
-                'status' => $terlambat ? self::STATUS_TERLAMBAT : self::STATUS_DIKEMBALIKAN,
+                'status' => self::STATUS_DIKEMBALIKAN,
                 'tanggal_kembali' => now()->toDateString(),
                 'id_user' => $petugas->id_user,
                 'denda' => max(0, $denda),

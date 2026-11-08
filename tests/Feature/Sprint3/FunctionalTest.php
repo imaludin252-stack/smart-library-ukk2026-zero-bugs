@@ -320,9 +320,44 @@ class FunctionalTest extends TestCase
 
         $this->assertDatabaseHas('loans', [
             'id_peminjaman' => $loan->id_peminjaman,
-            'status' => Loan::STATUS_TERLAMBAT,
+            'status' => Loan::STATUS_DIKEMBALIKAN,
             'denda' => 3000,
         ]);
+
+        $this->assertNotNull($loan->fresh()->tanggal_kembali);
+    }
+
+    public function test_pengembalian_terlambat_keluar_dari_daftar_pinjaman_aktif(): void
+    {
+        $petugas = $this->buatPetugas();
+        [, $member] = $this->buatSiswa();
+        $book = $this->buatBuku();
+        $loan = $this->buatPinjaman($member, $book, Loan::STATUS_DIPINJAM, [
+            'tanggal_jatuh_tempo' => now()->subDays(2)->toDateString(),
+        ]);
+
+        $this->assertSame(1, $member->pinjamanAktif());
+
+        $this->actingAs($petugas)
+            ->patch(route('petugas.sirkulasi.kembalikan', $loan), [
+                'denda' => 2000,
+                'kondisi_buku' => 'baik',
+            ])
+            ->assertRedirect(route('petugas.sirkulasi.index'));
+
+        $this->assertSame(0, $member->pinjamanAktif());
+        $this->assertFalse($member->punyaKeterlambatan());
+
+        // Hapus flash message agar kode transaksi tidak terbaca dari notifikasi.
+        $this->flushSession();
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.sirkulasi.index', ['tab' => 'aktif']))
+            ->assertDontSee($loan->kode_transaksi);
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.sirkulasi.index', ['tab' => 'selesai']))
+            ->assertSee($loan->kode_transaksi);
     }
 
     public function test_petugas_dapat_mencatat_peminjaman_manual_dari_meja_sirkulasi(): void
