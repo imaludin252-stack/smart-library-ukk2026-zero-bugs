@@ -9,6 +9,7 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\Petugas\AnggotaController;
 use App\Http\Controllers\Petugas\BookController;
 use App\Http\Controllers\Petugas\DashboardController;
+use App\Http\Controllers\Petugas\DendaController;
 use App\Http\Controllers\Petugas\KategoriController;
 use App\Http\Controllers\Petugas\LaporanController;
 use App\Http\Controllers\Petugas\PenulisController;
@@ -90,6 +91,9 @@ Route::middleware(['auth', 'role:petugas,admin'])->prefix('petugas')->name('petu
     Route::patch('/sirkulasi/{loan}/verifikasi', [SirkulasiController::class, 'verifikasi'])->name('sirkulasi.verifikasi');
     Route::patch('/sirkulasi/{loan}/tolak', [SirkulasiController::class, 'tolak'])->name('sirkulasi.tolak');
     Route::patch('/sirkulasi/{loan}/kembalikan', [SirkulasiController::class, 'kembalikan'])->name('sirkulasi.kembalikan');
+
+    Route::get('/denda', [DendaController::class, 'index'])->name('denda.index');
+    Route::put('/denda/{loan}', [DendaController::class, 'update'])->name('denda.update');
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/pdf', [LaporanController::class, 'pdf'])->name('laporan.pdf');

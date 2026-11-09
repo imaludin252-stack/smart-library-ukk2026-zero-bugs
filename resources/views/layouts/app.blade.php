@@ -27,6 +27,7 @@
             ['route' => 'petugas.kategori.index', 'label' => 'Kategori & Penulis', 'icon' => 'tag', 'active' => 'petugas.kategori.*'],
             ['route' => 'petugas.anggota.index', 'label' => 'Data Anggota Siswa', 'icon' => 'users', 'active' => 'petugas.anggota.*'],
             ['route' => 'petugas.sirkulasi.index', 'label' => 'Meja Sirkulasi', 'icon' => 'refresh', 'active' => 'petugas.sirkulasi.*'],
+            ['route' => 'petugas.denda.index', 'label' => 'Denda', 'icon' => 'credit-card', 'active' => 'petugas.denda.*'],
             ['route' => 'petugas.laporan.index', 'label' => 'Laporan & Rekap', 'icon' => 'bar-chart', 'active' => 'petugas.laporan.*'],
         ];
         if ($role === 'admin') {

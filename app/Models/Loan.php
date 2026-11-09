@@ -11,10 +11,15 @@ use Illuminate\Support\Facades\DB;
 class Loan extends Model
 {
     public const STATUS_DIAJUKAN = 'diajukan';
+
     public const STATUS_DIPINJAM = 'dipinjam';
+
     public const STATUS_DIKEMBALIKAN = 'dikembalikan';
+
     public const STATUS_TERLAMBAT = 'terlambat';
+
     public const STATUS_DITOLAK = 'ditolak';
+
     public const STATUS_DIBATALKAN = 'dibatalkan';
 
     /** Status yang masih menahan stok buku (BR-01). */
@@ -29,6 +34,15 @@ class Loan extends Model
         self::STATUS_DIBATALKAN => 'Dibatalkan',
     ];
 
+    public const STATUS_DENDA_BELUM_LUNAS = 'belum_lunas';
+
+    public const STATUS_DENDA_LUNAS = 'lunas';
+
+    public const STATUS_DENDA_LABEL = [
+        self::STATUS_DENDA_BELUM_LUNAS => 'Belum Lunas',
+        self::STATUS_DENDA_LUNAS => 'Lunas',
+    ];
+
     protected $primaryKey = 'id_peminjaman';
 
     protected $fillable = [
@@ -40,6 +54,8 @@ class Loan extends Model
         'tanggal_kembali',
         'status',
         'denda',
+        'status_denda',
+        'tanggal_bayar_denda',
         'kondisi_buku',
         'sudah_diperpanjang',
         'catatan',
@@ -52,6 +68,7 @@ class Loan extends Model
             'tanggal_jatuh_tempo' => 'date',
             'tanggal_kembali' => 'date',
             'denda' => 'integer',
+            'tanggal_bayar_denda' => 'date',
             'sudah_diperpanjang' => 'boolean',
         ];
     }
@@ -84,6 +101,16 @@ class Loan extends Model
     public function statusLabel(): string
     {
         return self::STATUS_LABEL[$this->status] ?? ucfirst($this->status);
+    }
+
+    public function statusDendaLabel(): string
+    {
+        return self::STATUS_DENDA_LABEL[$this->status_denda] ?? 'Belum Lunas';
+    }
+
+    public function isDendaLunas(): bool
+    {
+        return $this->status_denda === self::STATUS_DENDA_LUNAS;
     }
 
     public function isMenunggu(): bool

@@ -13,6 +13,8 @@
         'nonaktif' => ['badge-neutral', 'Nonaktif'],
         'aktif' => ['badge-success', 'Aktif'],
         'mendekati' => ['badge-warning', 'Mendekati Tempo'],
+        'belum_lunas' => ['badge-warning', 'Belum Lunas'],
+        'lunas' => ['badge-success', 'Lunas'],
     ];
 
     [$class, $default] = $map[$status] ?? ['badge-neutral', ucfirst((string) $status)];
