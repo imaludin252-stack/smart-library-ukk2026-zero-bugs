@@ -5,8 +5,6 @@ SMK Budi Bakti Ciwidey · PPLG/RPL · UKK 2026/2027
 
 Smart Library adalah aplikasi perpustakaan sekolah berbasis web untuk mengelola katalog, anggota, peminjaman, pengembalian, denda, dan laporan sirkulasi dalam satu alur kerja. Aplikasi ini menggantikan pencatatan manual yang rawan duplikasi, kehilangan riwayat, dan kesalahan rekap.
 
-![Beranda siswa](dokument/Final/screenshots/demo-02-siswa-beranda.png)
-
 ## Daftar Isi
 
 - [Latar Belakang](#latar-belakang)
@@ -112,8 +110,6 @@ Perilaku utama:
 - Modal edit memvalidasi nominal 0–100.000.000 dan status pembayaran.
 - Status Lunas otomatis mengisi tanggal pembayaran; pembatalan status Lunas mengosongkan tanggal tersebut.
 - Denda belum lunas menahan penerbitan Surat Bebas Pustaka.
-
-![Rekap denda petugas](dokument/Final/screenshots/demo-14-denda.png)
 
 ## Peran Pengguna
 
@@ -365,7 +361,7 @@ Hasil verifikasi staging:
 
 ### Produksi
 
-Produksi ditargetkan pada server sekolah dengan MySQL 8, PHP 8.2+, Nginx/Apache, dan HTTPS. Langkah lengkap, konfigurasi Nginx, hardening, backup, dan rollback tersedia di `dokument/Final/S4-02_Production_Staging_Deployment.docx`.
+Produksi ditargetkan pada server sekolah dengan MySQL 8, PHP 8.2+, Nginx/Apache, dan HTTPS. Langkah lengkap, konfigurasi Nginx, hardening, backup, dan rollback didokumentasikan pada arsip Sprint 4 di luar repositori.
 
 Ringkasan perintah produksi:
 
@@ -402,8 +398,6 @@ smart-library-app/
 │   ├── migrations/                # 15 migrasi
 │   ├── seeders/                   # Setting, User, Book, Loan
 │   └── staging.sqlite             # Database staging (tidak di-commit)
-├── dokument/
-│   └── Final/                     # Dokumen rilis, lampiran, screenshot
 ├── public/
 │   ├── build/                     # Hasil Vite
 │   └── covers/                    # Sampul buku
@@ -470,22 +464,17 @@ Aturan tambahan hasil RC:
 
 ## Dokumentasi
 
-Seluruh dokumen Sprint 4 tersedia di `dokument/Smart Library/Sprint 4/`:
+Dokumentasi Sprint 4, PRD, desain UI/UX, screenshot demo, dan log pengujian disimpan di luar repositori agar repositori tetap ringkas. Arsip tersebut mencakup:
 
-| Dokumen | Lokasi |
-| --- | --- |
-| S4-01 Final Bug Fixing & Release Candidate | `dokument/Smart Library/Sprint 4/S4-01_Final_Bug_Fixing_Release_Candidate/S4-01_Final_Bug_Fixing_Release_Candidate.docx` |
-| S4-02 Production & Staging Deployment | `dokument/Smart Library/Sprint 4/S4-02_Production_Staging_Deployment/S4-02_Production_Staging_Deployment.docx` |
-| S4-03 Technical Docs | `dokument/Smart Library/Sprint 4/S4-03_TECHNICAL_DOCS/S4-03_TECHNICAL_DOCS.docx` |
-| S4-04 Repository README | `dokument/Smart Library/Sprint 4/S4-04_Repository_README/S4-04_Repository_README.docx` |
-| S4-05 API Documentation | `dokument/Smart Library/Sprint 4/S4-05_API_Documentation/S4-05_API_Documentation.docx` |
-| S4-08 Persiapan Pertanggungjawaban Individu | `dokument/Smart Library/Sprint 4/S4-08_Persiapan_Pertanggungjawaban_Individu/S4-08_Persiapan_Pertanggungjawaban_Individu.docx` |
-| PRD | `dokument/PRD Smart Library – SMK Budi Bakti Ciwidey.md` |
-| Desain UI/UX | `dokument/design.md` |
-| Screenshot demo | `dokument/Final/screenshots/` |
-| Log pengujian dan staging | `dokument/Final/lampiran/` |
+- S4-01 Final Bug Fixing & Release Candidate
+- S4-02 Production & Staging Deployment
+- S4-03 Technical Docs
+- S4-04 Repository README
+- S4-05 API Documentation
+- S4-08 Persiapan Pertanggungjawaban Individu
+- PRD, desain UI/UX, screenshot demo, dan lampiran pengujian
 
-Sumber Markdown S4-01 dan S4-02 tersedia di `dokument/Final/md/`.
+README ini adalah satu-satunya dokumen proyek yang disimpan di repositori.
 
 ## Tim
 
