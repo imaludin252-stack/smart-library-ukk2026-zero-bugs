@@ -7,11 +7,12 @@
 
     @php
         $tabs = [
-            'semua' => ['label' => 'Semua', 'count' => $jumlahAktif + $jumlahVerifikasi + $jumlahSelesai + $jumlahTerlambat],
+            'semua' => ['label' => 'Semua', 'count' => $jumlahSemua],
             'aktif' => ['label' => 'Sedang Dipinjam', 'count' => $jumlahAktif],
             'verifikasi' => ['label' => 'Menunggu Verifikasi', 'count' => $jumlahVerifikasi],
             'terlambat' => ['label' => 'Terlambat', 'count' => $jumlahTerlambat],
             'selesai' => ['label' => 'Selesai', 'count' => $jumlahSelesai],
+            'ditolak' => ['label' => 'Ditolak / Dibatalkan', 'count' => $jumlahDitolak],
         ];
         $persenKuota = $batas > 0 ? min(100, ($kuota / $batas) * 100) : 0;
     @endphp
@@ -106,7 +107,9 @@
                             </div>
 
                             @if ($loan->catatan)
-                                <p class="mt-2 rounded-lg bg-[var(--color-warning-bg)] px-3 py-2 text-[12px] font-medium text-[var(--color-warning)]">Catatan petugas: {{ $loan->catatan }}</p>
+                                <p class="mt-2 rounded-lg bg-[var(--color-warning-bg)] px-3 py-2 text-[12px] font-medium text-[var(--color-warning)]">
+                                    {{ $loan->status === \App\Models\Loan::STATUS_DITOLAK ? 'Alasan penolakan' : 'Catatan petugas' }}: {{ $loan->catatan }}
+                                </p>
                             @endif
 
                             <div class="mt-3 flex flex-wrap gap-2">

@@ -57,4 +57,10 @@ class Member extends Model
                 });
         })->exists();
     }
+
+    /** Apakah anggota masih memiliki denda yang belum dibayar. */
+    public function punyaDendaBelumLunas(): bool
+    {
+        return $this->loans()->dendaBelumLunas()->exists();
+    }
 }

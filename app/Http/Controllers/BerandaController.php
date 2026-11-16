@@ -33,11 +33,10 @@ class BerandaController extends Controller
 
         $riwayatSelesai = Loan::untukMember($member)->whereNotNull('tanggal_kembali')->count();
 
-        $totalDenda = (int) Loan::untukMember($member)->sum('denda');
+        // RC-08: kartu "Status Denda" hanya menampilkan denda yang belum lunas.
+        $totalDenda = (int) Loan::untukMember($member)->dendaBelumLunas()->sum('denda');
 
         $batasPinjam = (int) Setting::get('batas_pinjam_aktif', 3);
-
-        $dipinjamIds = $pinjamanAktif->pluck('id_buku');
 
         $populer = Book::query()
             ->with(['authors', 'kategori'])
@@ -57,7 +56,6 @@ class BerandaController extends Controller
             'totalDenda' => $totalDenda,
             'batasPinjam' => $batasPinjam,
             'populer' => $populer,
-            'dipinjamIds' => $dipinjamIds,
         ]);
     }
 }

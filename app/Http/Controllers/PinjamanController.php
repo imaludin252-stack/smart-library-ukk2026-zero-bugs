@@ -27,13 +27,15 @@ class PinjamanController extends Controller
         $query = Loan::untukMember($member)->with(['books.authors', 'books.kategori'])->latest();
 
         match ($tab) {
-            'aktif' => $query->whereIn('status', [Loan::STATUS_DIPINJAM, Loan::STATUS_TERLAMBAT]),
+            // RC-07/RC-08: "Sedang Dipinjam" tidak lagi mencampur keterlambatan
+            // (punya tab sendiri), dan "Semua" menampilkan seluruh status
+            // termasuk pengajuan yang ditolak/dibatalkan.
+            'aktif' => $query->where('status', Loan::STATUS_DIPINJAM),
             'verifikasi' => $query->where('status', Loan::STATUS_DIAJUKAN),
             'selesai' => $query->whereNotNull('tanggal_kembali'),
             'terlambat' => $query->where('status', Loan::STATUS_TERLAMBAT),
-            default => $query->where(function ($q) {
-                $q->whereIn('status', Loan::STATUS_AKTIF)->orWhereNotNull('tanggal_kembali');
-            }),
+            'ditolak' => $query->whereIn('status', [Loan::STATUS_DITOLAK, Loan::STATUS_DIBATALKAN]),
+            default => $query,
         };
 
         $loans = $query->paginate(8)->withQueryString();
@@ -45,11 +47,14 @@ class PinjamanController extends Controller
             'loans' => $loans,
             'tab' => $tab,
             'batas' => $batas,
-            'jumlahAktif' => (clone $semua)->whereIn('status', [Loan::STATUS_DIPINJAM, Loan::STATUS_TERLAMBAT])->count(),
+            'jumlahSemua' => (clone $semua)->count(),
+            'jumlahAktif' => (clone $semua)->where('status', Loan::STATUS_DIPINJAM)->count(),
             'jumlahVerifikasi' => (clone $semua)->where('status', Loan::STATUS_DIAJUKAN)->count(),
             'jumlahTerlambat' => (clone $semua)->where('status', Loan::STATUS_TERLAMBAT)->count(),
             'jumlahSelesai' => (clone $semua)->whereNotNull('tanggal_kembali')->count(),
-            'totalDenda' => (int) (clone $semua)->sum('denda'),
+            'jumlahDitolak' => (clone $semua)->whereIn('status', [Loan::STATUS_DITOLAK, Loan::STATUS_DIBATALKAN])->count(),
+            // RC-08: badge denda hanya menghitung denda yang belum lunas.
+            'totalDenda' => (int) (clone $semua)->dendaBelumLunas()->sum('denda'),
             'kuota' => $semua->whereIn('status', Loan::STATUS_AKTIF)->count(),
             'dapatPinjam' => ! $member->punyaKeterlambatan(),
         ]);
@@ -123,6 +128,11 @@ class PinjamanController extends Controller
     public function perpanjang(Request $request, Loan $loan): RedirectResponse
     {
         $this->autoritaskan($request, $loan);
+
+        // RC-04: segarkan status dari tanggal jatuh tempo agar status "dipinjam"
+        // yang basi (belum disinkronkan) tidak lolos dari aturan keterlambatan.
+        Loan::segarkanKeterlambatan($loan->id_anggota);
+        $loan->refresh();
 
         // BUG-05: periksa keterlambatan lebih dulu agar pesan yang muncul akurat.
         if ($loan->isTerlambat()) {

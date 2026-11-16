@@ -98,6 +98,16 @@ class Loan extends Model
         return $query->where('id_anggota', $member->id_anggota);
     }
 
+    /** Denda yang masih harus dibayar anggota (belum lunas). */
+    public function scopeDendaBelumLunas(Builder $query): Builder
+    {
+        return $query->where('denda', '>', 0)
+            ->where(function (Builder $q) {
+                $q->whereNull('status_denda')
+                    ->orWhere('status_denda', '!=', self::STATUS_DENDA_LUNAS);
+            });
+    }
+
     public function statusLabel(): string
     {
         return self::STATUS_LABEL[$this->status] ?? ucfirst($this->status);

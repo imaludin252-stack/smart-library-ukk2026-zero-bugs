@@ -105,6 +105,13 @@ class BookController extends Controller
     {
         $data = $this->validasi($request, $book);
 
+        // RC-06: stok tidak boleh turun di bawah jumlah eksemplar yang
+        // sedang menahan stok (diajukan/dipinjam/terlambat).
+        $dipinjam = $book->jumlahDipinjam();
+        if ((int) $data['stok'] < $dipinjam) {
+            return back()->withInput()->with('error', 'Stok buku "'.$book->judul.'" tidak boleh lebih kecil dari jumlah eksemplar yang sedang dipinjam ('.$dipinjam.').');
+        }
+
         DB::transaction(function () use ($book, $data, $request) {
             $book->update($this->atribut($data));
 
@@ -159,7 +166,9 @@ class BookController extends Controller
     private function validasi(Request $request, ?Book $book = null): array
     {
         return $request->validate([
-            'kode_buku' => ['required', 'string', 'max:30', Rule::unique('books', 'kode_buku')->ignore($book?->getKey())],
+            // RC-09: abaikan baris yang sedang diubah berdasarkan primary key
+            // "id_buku" (bukan kolom "id" yang tidak ada di tabel books).
+            'kode_buku' => ['required', 'string', 'max:30', Rule::unique('books', 'kode_buku')->ignore($book)],
             'judul' => ['required', 'string', 'max:255'],
             'id_kategori' => ['required', 'exists:categories,id_kategori'],
             'penulis' => ['nullable', 'string', 'max:255'],

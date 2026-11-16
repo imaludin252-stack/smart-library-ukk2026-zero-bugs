@@ -42,16 +42,7 @@ class LaporanController extends Controller
 
         $maxTren = max(1, (int) $trenBulanan->max('total'));
 
-        $bukuPopuler = Book::query()
-            ->with('kategori')
-            ->withCount(['loanItems as total_pinjam' => fn ($q) => $q->whereHas('loan', fn ($l) => $l
-                ->whereNotIn('status', [Loan::STATUS_DITOLAK, Loan::STATUS_DIBATALKAN])
-                ->whereDate('tanggal_pinjam', '>=', $dari)
-                ->whereDate('tanggal_pinjam', '<=', $sampai))])
-            ->having('total_pinjam', '>', 0)
-            ->orderByDesc('total_pinjam')
-            ->limit(8)
-            ->get();
+        $bukuPopuler = $this->bukuPopuler($dari, $sampai, 8);
 
         $maxPopuler = max(1, (int) $bukuPopuler->max('total_pinjam'));
 
@@ -118,23 +109,17 @@ class LaporanController extends Controller
                 ->oldest('tanggal_pinjam')
                 ->get();
         } elseif ($jenis === 'terlambat') {
+            // RC-03: laporan terlambat wajib mengikuti periode yang dipilih.
             $loans = Loan::with(['member.user', 'books'])
                 ->where(function ($q) {
                     $q->where('denda', '>', 0)->orWhere('status', Loan::STATUS_TERLAMBAT);
                 })
+                ->whereDate('tanggal_pinjam', '>=', $dari)
+                ->whereDate('tanggal_pinjam', '<=', $sampai)
                 ->oldest('tanggal_pinjam')
                 ->get();
         } else {
-            $populer = Book::query()
-                ->with('kategori')
-                ->withCount(['loanItems as total_pinjam' => fn ($q) => $q->whereHas('loan', fn ($l) => $l
-                    ->whereNotIn('status', [Loan::STATUS_DITOLAK, Loan::STATUS_DIBATALKAN])
-                    ->whereDate('tanggal_pinjam', '>=', $dari)
-                    ->whereDate('tanggal_pinjam', '<=', $sampai))])
-                ->having('total_pinjam', '>', 0)
-                ->orderByDesc('total_pinjam')
-                ->limit(20)
-                ->get();
+            $populer = $this->bukuPopuler($dari, $sampai, 20);
         }
 
         $pdf = Pdf::loadView('reports.laporan', [
@@ -150,6 +135,26 @@ class LaporanController extends Controller
         ])->setPaper('a4', $jenis === 'populer' ? 'portrait' : 'landscape');
 
         return $pdf->download('laporan-'.str_replace(' ', '-', strtolower($judul)).'-'.$dari.'-'.$sampai.'.pdf');
+    }
+
+    /**
+     * RC-10: buku terpopuler difilter lewat whereHas, bukan HAVING pada
+     * query non-agregat yang tidak portabel ke SQLite.
+     */
+    private function bukuPopuler(string $dari, string $sampai, int $limit): \Illuminate\Support\Collection
+    {
+        $dalamPeriode = fn ($query) => $query->whereHas('loan', fn ($loan) => $loan
+            ->whereNotIn('status', [Loan::STATUS_DITOLAK, Loan::STATUS_DIBATALKAN])
+            ->whereDate('tanggal_pinjam', '>=', $dari)
+            ->whereDate('tanggal_pinjam', '<=', $sampai));
+
+        return Book::query()
+            ->with('kategori')
+            ->withCount(['loanItems as total_pinjam' => $dalamPeriode])
+            ->whereHas('loanItems', $dalamPeriode)
+            ->orderByDesc('total_pinjam')
+            ->limit($limit)
+            ->get();
     }
 
     /** @return array{0: string, 1: string} */

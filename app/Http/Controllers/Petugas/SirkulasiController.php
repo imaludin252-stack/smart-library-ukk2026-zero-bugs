@@ -75,6 +75,17 @@ class SirkulasiController extends Controller
             return back()->with('error', 'Anggota telah mencapai batas maksimal '.$batas.' peminjaman aktif.');
         }
 
+        // RC-05: cegah transaksi ganda untuk buku yang sama, termasuk yang
+        // masih menunggu verifikasi (alur siswa sudah mencegah kasus ini).
+        $sudahAda = Loan::untukMember($member)
+            ->whereIn('status', Loan::STATUS_AKTIF)
+            ->whereHas('books', fn ($q) => $q->where('books.id_buku', $book->id_buku))
+            ->exists();
+
+        if ($sudahAda) {
+            return back()->with('error', 'Anggota masih memiliki pengajuan/pinjaman aktif untuk buku "'.$book->judul.'".');
+        }
+
         $durasi = (int) Setting::get('durasi_pinjam', 7);
 
         $loan = Loan::create([

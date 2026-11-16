@@ -57,7 +57,9 @@ class RiwayatController extends Controller
         $terlambat = (clone $semua)->where('denda', '>', 0)->count();
         $totalDenda = (int) (clone $semua)->sum('denda');
 
+        // RC-02: denda yang belum lunas juga menahan surat bebas pustaka.
         $bebasPustaka = ! $member->punyaKeterlambatan()
+            && ! $member->punyaDendaBelumLunas()
             && Loan::untukMember($member)->whereIn('status', Loan::STATUS_AKTIF)->where('status', '!=', Loan::STATUS_DIAJUKAN)->count() === 0;
 
         return view('siswa.riwayat', [
@@ -88,7 +90,7 @@ class RiwayatController extends Controller
             ->exists();
 
         abort_if(
-            $member->punyaKeterlambatan() || $masihAktif,
+            $member->punyaKeterlambatan() || $masihAktif || $member->punyaDendaBelumLunas(),
             403,
             'Surat bebas pustaka belum dapat diterbitkan. Selesaikan seluruh pinjaman aktif dan denda terlebih dahulu.'
         );
