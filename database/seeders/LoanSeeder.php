@@ -23,64 +23,70 @@ class LoanSeeder extends Seeder
         }
 
         $durasi = (int) Setting::get('durasi_pinjam', 7);
+        $tarif = (int) Setting::get('tarif_denda', 1000);
 
+        // Satu pinjaman aktif dan satu pinjaman terlambat sehari.
         $this->buat($siswa->firstWhere('nisn', '0062819230'), $buku->firstWhere('kode_buku', 'RPL-PWD-001'),
             now()->subDays(5), now()->subDays(5)->addDays($durasi), Loan::STATUS_DIPINJAM, $petugas);
 
-        $this->buat($siswa->firstWhere('nisn', '0062819230'), $buku->firstWhere('kode_buku', 'RPL-ALG-004'),
-            now()->subDays(2), now()->subDays(2)->addDays($durasi), Loan::STATUS_DIPINJAM, $petugas);
+        $this->buat($siswa->firstWhere('nisn', '0062819230'), $buku->firstWhere('kode_buku', 'RPL-PBD-002'),
+            now()->subDays(9), now()->subDay(), Loan::STATUS_TERLAMBAT, $petugas);
 
+        // Satu pengajuan baru agar Meja Sirkulasi memiliki antrean saat demo.
         $this->buat($siswa->firstWhere('nisn', '0062819230'), $buku->firstWhere('kode_buku', 'UMK-BIN-002'),
             now()->subDay(), now()->subDay()->addDays($durasi), Loan::STATUS_DIAJUKAN, null);
 
-        $this->buat($siswa->firstWhere('nisn', '0068491022'), $buku->firstWhere('kode_buku', 'RPL-PBD-002'),
-            now()->subDays(9), now()->subDays(2), Loan::STATUS_TERLAMBAT, $petugas2);
-
-        $this->buat($siswa->firstWhere('nisn', '0057731188'), $buku->firstWhere('kode_buku', 'TKJ-JAR-001'),
-            now()->subDays(3), now()->subDays(3)->addDays($durasi), Loan::STATUS_DIPINJAM, $petugas);
-
-        $this->buat($siswa->firstWhere('nisn', '0069123401'), $buku->firstWhere('kode_buku', 'AKL-AKD-001'),
-            now()->subDays(6), now()->subDays(6)->addDays($durasi), Loan::STATUS_DIAJUKAN, null);
-
-        $this->buat($siswa->firstWhere('nisn', '0063345512'), $buku->firstWhere('kode_buku', 'OTKP-MPB-001'),
-            now()->subDays(4), now()->subDays(4)->addDays($durasi), Loan::STATUS_DIAJUKAN, null);
-
-        $this->buat($siswa->firstWhere('nisn', '0067782210'), $buku->firstWhere('kode_buku', 'TKJ-KJD-003'),
-            now()->subDays(8), now()->subDays(1), Loan::STATUS_DIPINJAM, $petugas2);
-
-        $selesai = [
-            ['UMK-MTD-001', 20, 14, 14, 0],
-            ['UMK-PKN-001', 35, 28, 28, 0],
-            ['UMK-INF-002', 30, 23, 23, 0],
-            ['RPL-PAM-003', 50, 43, 40, 3],
-            ['UMK-BIN-001', 45, 38, 38, 0],
-            ['TKJ-TKN-002', 40, 33, 33, 0],
+        // Delapan transaksi dikembalikan dengan denda, total Rp194.000.
+        $denda = [
+            ['0062819230', 'RPL-PAM-003', 80, 73, 10, 63],
+            ['0062819230', 'RPL-ALG-004', 45, 38, 16, 22],
+            ['0068491022', 'RPL-PBD-002', 40, 33, 18, 15],
+            ['0057731188', 'TKJ-JAR-001', 38, 31, 14, 17],
+            ['0069123401', 'AKL-AKD-001', 42, 35, 13, 22],
+            ['0067782210', 'TKJ-KJD-003', 36, 29, 13, 16],
+            ['0063345512', 'OTKP-MPB-001', 48, 41, 23, 18],
+            ['0058890034', 'TKJ-TKN-002', 35, 28, 7, 21],
         ];
 
-        foreach ($selesai as [$kode, $lalu, $pinjam, $kembali, $terlambatHari]) {
-            $book = $buku->firstWhere('kode_buku', $kode);
-            if (! $book) {
-                continue;
-            }
-
-            $loan = $this->buat(
-                $siswa->firstWhere('nisn', '0062819230'),
-                $book,
-                now()->subDays($lalu),
-                now()->subDays($lalu)->addDays($durasi),
-                $terlambatHari > 0 ? Loan::STATUS_TERLAMBAT : Loan::STATUS_DIKEMBALIKAN,
+        foreach ($denda as [$nisn, $kode, $pinjamHari, $jatuhHari, $kembaliHari, $terlambatHari]) {
+            $this->buat(
+                $siswa->firstWhere('nisn', $nisn),
+                $buku->firstWhere('kode_buku', $kode),
+                now()->subDays($pinjamHari),
+                now()->subDays($jatuhHari),
+                Loan::STATUS_DIKEMBALIKAN,
                 $petugas,
+                now()->subDays($kembaliHari),
+                $terlambatHari * $tarif,
             );
+        }
 
-            $loan->update([
-                'tanggal_kembali' => now()->subDays($lalu)->addDays($kembali)->toDateString(),
-                'denda' => $terlambatHari * (int) Setting::get('tarif_denda', 1000),
-                'kondisi_buku' => 'baik',
-            ]);
+        // Sembilan transaksi dikembalikan tepat waktu tanpa denda.
+        $tepatWaktu = [
+            ['0062819230', 'UMK-MTD-001', 20, 13, 14],
+            ['0062819230', 'UMK-PKN-001', 35, 28, 28],
+            ['0062819230', 'UMK-INF-002', 30, 23, 23],
+            ['0062819230', 'UMK-BIN-001', 45, 38, 39],
+            ['0064451190', 'AKL-PAK-002', 25, 18, 19],
+            ['0064451190', 'UMK-BIN-002', 32, 25, 26],
+            ['0067782210', 'RPL-DGS-005', 28, 21, 22],
+            ['0057731188', 'TKJ-SJL-004', 33, 26, 27],
+        ];
+
+        foreach ($tepatWaktu as [$nisn, $kode, $pinjamHari, $jatuhHari, $kembaliHari]) {
+            $this->buat(
+                $siswa->firstWhere('nisn', $nisn),
+                $buku->firstWhere('kode_buku', $kode),
+                now()->subDays($pinjamHari),
+                now()->subDays($jatuhHari),
+                Loan::STATUS_DIKEMBALIKAN,
+                $petugas2,
+                now()->subDays($kembaliHari),
+            );
         }
     }
 
-    private function buat(?Member $member, ?Book $book, $pinjam, $jatuhTempo, string $status, ?User $petugas): ?Loan
+    private function buat(?Member $member, ?Book $book, $pinjam, $jatuhTempo, string $status, ?User $petugas, $kembali = null, int $denda = 0): ?Loan
     {
         if (! $member || ! $book) {
             return null;
@@ -92,9 +98,10 @@ class LoanSeeder extends Seeder
             'id_user' => $petugas?->id_user,
             'tanggal_pinjam' => $pinjam->toDateString(),
             'tanggal_jatuh_tempo' => $jatuhTempo->toDateString(),
-            'tanggal_kembali' => in_array($status, [Loan::STATUS_DIKEMBALIKAN, Loan::STATUS_DITOLAK, Loan::STATUS_DIBATALKAN], true)
-                ? now()->toDateString() : null,
+            'tanggal_kembali' => $kembali?->toDateString(),
             'status' => $status,
+            'denda' => $denda,
+            'kondisi_buku' => $kembali ? 'baik' : null,
         ]);
 
         $loan->books()->attach($book->id_buku);

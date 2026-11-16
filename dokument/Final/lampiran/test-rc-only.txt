@@ -1,0 +1,16 @@
+
+   PASS  Tests\Feature\Sprint4\ReleaseCandidateTest
+  Γ£ô zona waktu aplikasi mengikuti app timezone rc 01                                                             0.30s  
+  Γ£ô denda belum lunas memblokir surat bebas pustaka rc 02                                                        0.36s  
+  Γ£ô laporan terlambat hanya memuat transaksi dalam periode rc 03                                                 0.03s  
+  Γ£ô pinjaman kedaluwarsa dengan status basi tidak dapat diperpanjang rc 04                                       0.02s  
+  Γ£ô peminjaman manual ganda untuk buku yang sama ditolak rc 05                                                   0.03s  
+  Γ£ô stok buku tidak dapat diturunkan di bawah pinjaman aktif rc 06                                               0.03s  
+  Γ£ô ubah buku dengan kode yang sama tetap tersimpan rc 09                                                        0.02s  
+  Γ£ô halaman laporan dan pdf populer tampil di sqlite rc 10                                                       0.19s  
+  Γ£ô pengajuan ditolak dan dibatalkan tampil beserta alasannya rc 07                                              0.05s  
+  Γ£ô hitungan tab semua tidak menggandakan pinjaman terlambat rc 08                                               0.04s  
+  Γ£ô badge denda hanya menghitung denda belum lunas rc 08                                                         0.05s  
+
+  Tests:    11 passed (50 assertions)
+  Duration: 1.33s

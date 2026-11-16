@@ -1,0 +1,41 @@
+{
+  "waktu": "2026-11-16T12:11:27.380Z",
+  "baseUrl": "http://127.0.0.1:8010",
+  "viewport": "1440x900 (mobile 390x844)",
+  "checklist": {
+    "loginSiswa": true,
+    "berandaMemuatNama": true,
+    "katalogPencarian": {
+      "jumlah": 6,
+      "judul": true
+    },
+    "detailBuku": true,
+    "tabDitolakTampil": true,
+    "kuotaTampil": true,
+    "bebasPustakaTerkunci": true,
+    "loginPetugas": true,
+    "adaPermohonan": true,
+    "verifikasiDikirim": true,
+    "flashVerifikasi": true,
+    "laporanTampil": true,
+    "loginAdmin": true,
+    "adminPengguna": true,
+    "errorKonsol": [],
+    "gagalJaringan": []
+  },
+  "screenshots": [
+    "demo-01-login.png",
+    "demo-02-siswa-beranda.png",
+    "demo-03-katalog.png",
+    "demo-04-detail-buku.png",
+    "demo-05-pinjaman-saya.png",
+    "demo-06-riwayat-bebas-pustaka.png",
+    "demo-07-mobile-pinjaman.png",
+    "demo-08-petugas-dashboard.png",
+    "demo-09-sirkulasi-permohonan.png",
+    "demo-10-verifikasi-berhasil.png",
+    "demo-11-sirkulasi-aktif.png",
+    "demo-12-laporan.png",
+    "demo-13-admin-pengguna.png"
+  ]
+}

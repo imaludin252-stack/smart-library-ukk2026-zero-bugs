@@ -1,0 +1,61 @@
+﻿
+  GET|HEAD  / ................................................................................................... home
+  ANY       admin ................................................... admin. ΓÇ║ Illuminate\Routing ΓÇ║ RedirectController
+  GET|HEAD  admin/pengaturan ......................................... admin.pengaturan ΓÇ║ Admin\SettingController@edit
+  PUT       admin/pengaturan ................................ admin.pengaturan.update ΓÇ║ Admin\SettingController@update
+  GET|HEAD  admin/pengguna ............................................... admin.pengguna ΓÇ║ Admin\UserController@index
+  POST      admin/pengguna ......................................... admin.pengguna.store ΓÇ║ Admin\UserController@store
+  PUT       admin/pengguna/{user} ................................ admin.pengguna.update ΓÇ║ Admin\UserController@update
+  DELETE    admin/pengguna/{user} .............................. admin.pengguna.destroy ΓÇ║ Admin\UserController@destroy
+  PATCH     admin/pengguna/{user}/status ................... admin.pengguna.status ΓÇ║ Admin\UserController@toggleStatus
+  GET|HEAD  beranda ...................................................................... beranda ΓÇ║ BerandaController
+  GET|HEAD  katalog .......................................................... catalog.index ΓÇ║ CatalogController@index
+  GET|HEAD  katalog/{book} ..................................................... catalog.show ΓÇ║ CatalogController@show
+  GET|HEAD  login ................................................................ login ΓÇ║ Auth\LoginController@create
+  POST      login ......................................................... login.attempt ΓÇ║ Auth\LoginController@store
+  POST      logout ............................................................. logout ΓÇ║ Auth\LoginController@destroy
+  GET|HEAD  panduan .......................................................................................... panduan
+  GET|HEAD  petugas .................................................. petugas.dashboard ΓÇ║ Petugas\DashboardController
+  GET|HEAD  petugas/anggota .................................. petugas.anggota.index ΓÇ║ Petugas\AnggotaController@index
+  POST      petugas/anggota .................................. petugas.anggota.store ΓÇ║ Petugas\AnggotaController@store
+  PUT       petugas/anggota/{member} ....................... petugas.anggota.update ΓÇ║ Petugas\AnggotaController@update
+  DELETE    petugas/anggota/{member} ..................... petugas.anggota.destroy ΓÇ║ Petugas\AnggotaController@destroy
+  GET|HEAD  petugas/denda ........................................ petugas.denda.index ΓÇ║ Petugas\DendaController@index
+  PUT       petugas/denda/{loan} ............................... petugas.denda.update ΓÇ║ Petugas\DendaController@update
+  GET|HEAD  petugas/kategori ............................... petugas.kategori.index ΓÇ║ Petugas\KategoriController@index
+  POST      petugas/kategori ............................... petugas.kategori.store ΓÇ║ Petugas\KategoriController@store
+  PUT       petugas/kategori/{category} .................. petugas.kategori.update ΓÇ║ Petugas\KategoriController@update
+  DELETE    petugas/kategori/{category} ................ petugas.kategori.destroy ΓÇ║ Petugas\KategoriController@destroy
+  GET|HEAD  petugas/koleksi ..................................... petugas.koleksi.index ΓÇ║ Petugas\BookController@index
+  POST      petugas/koleksi ..................................... petugas.koleksi.store ΓÇ║ Petugas\BookController@store
+  GET|HEAD  petugas/koleksi/tambah ............................ petugas.koleksi.create ΓÇ║ Petugas\BookController@create
+  PUT       petugas/koleksi/{book} ............................ petugas.koleksi.update ΓÇ║ Petugas\BookController@update
+  DELETE    petugas/koleksi/{book} .......................... petugas.koleksi.destroy ΓÇ║ Petugas\BookController@destroy
+  PATCH     petugas/koleksi/{book}/status ............... petugas.koleksi.status ΓÇ║ Petugas\BookController@toggleStatus
+  GET|HEAD  petugas/koleksi/{book}/ubah ........................... petugas.koleksi.edit ΓÇ║ Petugas\BookController@edit
+  GET|HEAD  petugas/laporan .................................. petugas.laporan.index ΓÇ║ Petugas\LaporanController@index
+  GET|HEAD  petugas/laporan/pdf .................................. petugas.laporan.pdf ΓÇ║ Petugas\LaporanController@pdf
+  POST      petugas/penulis .................................. petugas.penulis.store ΓÇ║ Petugas\PenulisController@store
+  PUT       petugas/penulis/{author} ....................... petugas.penulis.update ΓÇ║ Petugas\PenulisController@update
+  DELETE    petugas/penulis/{author} ..................... petugas.penulis.destroy ΓÇ║ Petugas\PenulisController@destroy
+  GET|HEAD  petugas/sirkulasi ............................ petugas.sirkulasi.index ΓÇ║ Petugas\SirkulasiController@index
+  POST      petugas/sirkulasi/pinjam ................... petugas.sirkulasi.pinjam ΓÇ║ Petugas\SirkulasiController@pinjam
+  PATCH     petugas/sirkulasi/{loan}/kembalikan petugas.sirkulasi.kembalikan ΓÇ║ Petugas\SirkulasiController@kembalikan
+  PATCH     petugas/sirkulasi/{loan}/tolak ............... petugas.sirkulasi.tolak ΓÇ║ Petugas\SirkulasiController@tolak
+  PATCH     petugas/sirkulasi/{loan}/verifikasi petugas.sirkulasi.verifikasi ΓÇ║ Petugas\SirkulasiController@verifikasi
+  GET|HEAD  pinjaman ....................................................... pinjaman.index ΓÇ║ PinjamanController@index
+  POST      pinjaman ....................................................... pinjaman.store ΓÇ║ PinjamanController@store
+  PATCH     pinjaman/{loan}/batalkan .................................... pinjaman.batal ΓÇ║ PinjamanController@batalkan
+  PATCH     pinjaman/{loan}/perpanjang ........................... pinjaman.perpanjang ΓÇ║ PinjamanController@perpanjang
+  GET|HEAD  profil ............................................................. profil.index ΓÇ║ ProfilController@index
+  PUT       profil/kata-sandi ...................................... profil.password ΓÇ║ ProfilController@updatePassword
+  GET|HEAD  registrasi ..................................................... register ΓÇ║ Auth\RegisterController@create
+  POST      registrasi ................................................ register.store ΓÇ║ Auth\RegisterController@store
+  GET|HEAD  riwayat .......................................................... riwayat.index ΓÇ║ RiwayatController@index
+  GET|HEAD  riwayat/bebas-pustaka ..................................... riwayat.bebas ΓÇ║ RiwayatController@bebasPustaka
+  GET|HEAD  storage/{path} ............................................................................. storage.local
+  PUT       storage/{path} ...................................................................... storage.local.upload
+  GET|HEAD  up ........................................................................... generated::GIG0ZG4pOCecRlkq
+
+                                                                                                   Showing [57] routes
+

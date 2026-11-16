@@ -1,0 +1,31 @@
+Smart Library - staging smoke test
+Base URL : http://127.0.0.1:8010
+Waktu    : 2026-11-16 19:47:56
+
+Smart Library â?" staging smoke test
+Base URL : http://127.0.0.1:8010
+Waktu    : 2026-11-16 19:47:57
+
+[PASS] GET / mengarah ke katalog -> 302 -> http://127.0.0.1:8010/katalog
+[PASS] GET /katalog merespons 200 -> status 200
+[PASS] Katalog memuat judul aplikasi
+[PASS] Header X-Content-Type-Options: nosniff
+[PASS] Header X-Frame-Options: SAMEORIGIN
+[PASS] GET /login merespons 200 -> status 200
+[PASS] Login siswa berhasil -> 302 -> http://127.0.0.1:8010/beranda
+[PASS] GET /beranda merespons 200 -> status 200
+[PASS] Beranda memuat nama siswa
+[PASS] GET /pinjaman merespons 200 -> status 200
+[PASS] Tab RC-07 Ditolak / Dibatalkan tampil
+[PASS] GET /riwayat merespons 200 -> status 200
+[PASS] Bebas pustaka diblokir untuk anggota berpinjaman (RC-02) -> status 403
+[PASS] Login petugas berhasil -> 302 -> http://127.0.0.1:8010/petugas
+[PASS] GET /petugas merespons 200 -> status 200
+[PASS] GET /petugas/sirkulasi merespons 200 -> status 200
+[PASS] Unduh laporan PDF berhasil -> 200 -> application/pdf
+[PASS] Berkas PDF memiliki magic bytes %PDF -> 37,80,68,70
+[PASS] Login admin berhasil -> 302 -> http://127.0.0.1:8010/admin/pengguna
+[PASS] GET /admin/pengguna merespons 200 -> status 200
+
+Ringkasan: 20 lulus, 0 gagal
+Artefak sementara: C:\Users\acera\AppData\Local\Temp\smartlib-staging-smoke-00ce4e5b238c48b6be343f8b7810a65a
