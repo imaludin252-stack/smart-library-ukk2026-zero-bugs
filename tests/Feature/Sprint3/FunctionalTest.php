@@ -381,7 +381,7 @@ class FunctionalTest extends TestCase
     }
 
     // ------------------------------------------------------------------
-    // Manajemen pengguna & registrasi
+    // Manajemen pengguna
     // ------------------------------------------------------------------
 
     public function test_admin_dapat_membuat_akun_petugas_baru(): void
@@ -416,28 +416,6 @@ class FunctionalTest extends TestCase
             ]);
 
         $response->assertSessionHasErrors('email');
-    }
-
-    public function test_registrasi_siswa_membuat_akun_dan_profil_anggota(): void
-    {
-        $response = $this->post(route('register.store'), [
-            'name' => 'Siswa Baru',
-            'email' => 'siswa.baru@example.test',
-            'nisn' => '00998877',
-            'kelas' => 'X RPL 1',
-            'jurusan' => 'RPL',
-            'password' => 'rahasia123',
-            'password_confirmation' => 'rahasia123',
-        ]);
-
-        $response->assertRedirect(route('beranda'));
-        $this->assertAuthenticated();
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'siswa.baru@example.test',
-            'role' => User::ROLE_SISWA,
-        ]);
-        $this->assertDatabaseHas('members', ['nisn' => '00998877']);
     }
 
     // ------------------------------------------------------------------

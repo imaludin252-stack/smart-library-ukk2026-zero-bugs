@@ -3,7 +3,6 @@
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\Petugas\AnggotaController;
@@ -33,8 +32,6 @@ Route::view('/panduan', 'pages.panduan')->name('panduan');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login')->name('login.attempt');
-    Route::get('/registrasi', [RegisterController::class, 'create'])->name('register');
-    Route::post('/registrasi', [RegisterController::class, 'store'])->name('register.store');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');

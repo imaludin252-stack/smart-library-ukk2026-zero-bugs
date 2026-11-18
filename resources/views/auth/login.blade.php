@@ -118,11 +118,6 @@
                 <button type="submit" class="btn btn-primary btn-lg btn-full">
                     Masuk ke Smart Library <x-icon name="arrow-right" class="h-4 w-4" />
                 </button>
-
-                <p class="text-center text-[13px] text-[var(--color-ink-muted)]">
-                    Siswa belum punya akun?
-                    <a href="{{ route('register') }}" class="link">Daftar sekarang</a>
-                </p>
             </form>
 
             <div class="mt-6">

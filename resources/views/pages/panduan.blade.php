@@ -13,7 +13,7 @@
         <section class="card card-pad">
             <h2 class="section-title flex items-center gap-2"><x-icon name="graduation-cap" class="h-5 w-5 text-[var(--color-primary-800)]" /> Untuk Siswa</h2>
             <ol class="mt-4 space-y-3 text-sm text-[var(--color-ink-body)]">
-                <li class="flex gap-3"><span class="text-mono font-bold text-[var(--color-primary-800)]">01</span><span><b>Registrasi/Login.</b> Buat akun dengan NISN, atau masuk dengan akun yang telah dibuat petugas.</span></li>
+                <li class="flex gap-3"><span class="text-mono font-bold text-[var(--color-primary-800)]">01</span><span><b>Login.</b> Gunakan akun yang telah dibuat oleh petugas perpustakaan.</span></li>
                 <li class="flex gap-3"><span class="text-mono font-bold text-[var(--color-primary-800)]">02</span><span><b>Cari buku.</b> Gunakan kolom pencarian pada halaman Katalog berdasarkan judul, penulis, kategori, atau kode buku.</span></li>
                 <li class="flex gap-3"><span class="text-mono font-bold text-[var(--color-primary-800)]">03</span><span><b>Ajukan peminjaman.</b> Buka detail buku berstatus Tersedia lalu tekan <i>Pinjam Buku Ini Sekarang</i> dan setujui tata tertib.</span></li>
                 <li class="flex gap-3"><span class="text-mono font-bold text-[var(--color-primary-800)]">04</span><span><b>Verifikasi di meja sirkulasi.</b> Petugas memverifikasi pengajuan dan menyerahkan buku fisik.</span></li>
