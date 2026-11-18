@@ -174,7 +174,7 @@ class BookController extends Controller
             'penulis' => ['nullable', 'string', 'max:255'],
             'penerbit' => ['nullable', 'string', 'max:255'],
             'tahun' => ['nullable', 'integer', 'between:1900,'.(date('Y') + 1)],
-            'isbn' => ['nullable', 'string', 'max:30'],
+            'isbn' => ['nullable', 'string', 'max:30', Rule::unique('books', 'isbn')->ignore($book)],
             'tebal_halaman' => ['nullable', 'integer', 'min:1', 'max:5000'],
             'bahasa' => ['nullable', 'string', 'max:30'],
             'deskripsi' => ['nullable', 'string'],
@@ -187,6 +187,7 @@ class BookController extends Controller
             'cover' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:2048'],
         ], [], [
             'kode_buku' => 'kode buku',
+            'isbn' => 'ISBN',
             'id_kategori' => 'kategori',
             'jurusan' => 'program keahlian',
             'stok' => 'stok',
