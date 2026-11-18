@@ -1,6 +1,6 @@
 # Smart Library — Sistem Informasi Perpustakaan Sekolah
 
-**Tim Zero Bug** · Firgi Faisal & Imaludin  
+**Tim Zero Bug** ·  Imaludin  
 SMK Budi Bakti Ciwidey · PPLG/RPL · UKK 2026/2027
 
 Smart Library adalah aplikasi perpustakaan sekolah berbasis web untuk mengelola katalog, anggota, peminjaman, pengembalian, denda, dan laporan sirkulasi dalam satu alur kerja. Aplikasi ini menggantikan pencatatan manual yang rawan duplikasi, kehilangan riwayat, dan kesalahan rekap.
@@ -480,7 +480,7 @@ README ini adalah satu-satunya dokumen proyek yang disimpan di repositori.
 
 | Nama | Peran | Tanggung jawab |
 | --- | --- | --- |
-| Firgi Faisal | Frontend & UI/UX | Wireframe, Blade, Tailwind, komponen, responsif, usability, integrasi tampilan |
+| imaludin | Frontend & UI/UX | Wireframe, Blade, Tailwind, komponen, responsif, usability, integrasi tampilan |
 | Imaludin | Backend & Database | ERD, migrasi, controller, model, policy, validasi, keamanan, testing, deployment |
 
 Pembimbing: guru produktif PPLG/RPL SMK Budi Bakti Ciwidey.  
