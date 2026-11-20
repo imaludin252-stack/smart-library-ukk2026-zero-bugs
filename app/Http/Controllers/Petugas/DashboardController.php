@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Petugas;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Models\Category;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -55,6 +56,26 @@ class DashboardController extends Controller
 
         $maxDistribusi = max(1, (int) $distribusi->max());
 
+        // SKKNI 4: rekap agregat COUNT + SUM per kategori koleksi.
+        // "total_stok" adalah adaptasi "total nominal" pada proyek perpustakaan.
+        $rekapKategori = Category::query()
+            ->leftJoin('books', function ($join) {
+                $join->on('books.id_kategori', '=', 'categories.id_kategori')
+                    ->where('books.status', '=', Book::STATUS_AKTIF);
+            })
+            ->select([
+                'categories.id_kategori',
+                'categories.nama',
+                DB::raw('COUNT(books.id_buku) as total_data'),
+                DB::raw('COALESCE(SUM(books.stok), 0) as total_stok'),
+            ])
+            ->groupBy('categories.id_kategori', 'categories.nama')
+            ->orderBy('categories.nama')
+            ->get();
+
+        $totalJudul = (int) $rekapKategori->sum('total_data');
+        $totalEksemplar = (int) $rekapKategori->sum('total_stok');
+
         return view('petugas.dashboard', [
             'totalKoleksi' => $totalKoleksi,
             'sedangDipinjam' => $sedangDipinjam,
@@ -65,6 +86,9 @@ class DashboardController extends Controller
             'perhatian' => $perhatian,
             'distribusi' => $distribusi,
             'maxDistribusi' => $maxDistribusi,
+            'rekapKategori' => $rekapKategori,
+            'totalJudul' => $totalJudul,
+            'totalEksemplar' => $totalEksemplar,
             'programKeahlian' => self::PROGRAM_KEAHLIAN,
             'petugas' => $request->user(),
             'tanggal' => Carbon::now()->translatedFormat('l, d F Y'),
