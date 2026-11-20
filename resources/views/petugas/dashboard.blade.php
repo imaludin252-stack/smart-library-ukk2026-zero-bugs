@@ -117,4 +117,52 @@
             @endforeach
         </div>
     </div>
+
+    {{-- SKKNI 5: tabel ringkasan hasil rekap agregat per kategori. --}}
+    <div class="card card-pad mt-5">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <h2 class="section-title">Rekap Koleksi per Kategori</h2>
+                <p class="mt-1 text-[12px] text-[var(--color-ink-muted)]">Jumlah judul dan total eksemplar aktif pada setiap kategori koleksi.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="badge badge-info">{{ $rekapKategori->count() }} Kategori</span>
+                <a href="{{ route('petugas.koleksi.index') }}" class="link text-[13px]">Kelola Koleksi</a>
+            </div>
+        </div>
+
+        <div class="table-wrap mt-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Kategori</th>
+                        <th class="text-right">Jumlah Judul</th>
+                        <th class="text-right">Total Eksemplar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($rekapKategori as $rekap)
+                        <tr>
+                            <td class="font-semibold text-[var(--color-ink-strong)]">{{ $rekap->nama }}</td>
+                            <td class="text-right text-mono">{{ number_format((int) $rekap->total_data, 0, ',', '.') }}</td>
+                            <td class="text-right text-mono">{{ number_format((int) $rekap->total_stok, 0, ',', '.') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center text-[13px] text-[var(--color-ink-muted)]">Belum ada kategori koleksi.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+                @if ($rekapKategori->isNotEmpty())
+                    <tfoot>
+                        <tr class="border-t border-[var(--color-line)] font-bold text-[var(--color-ink-strong)]">
+                            <td class="px-4 py-3">Total</td>
+                            <td class="px-4 py-3 text-right text-mono">{{ number_format($totalJudul, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-right text-mono">{{ number_format($totalEksemplar, 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
+                @endif
+            </table>
+        </div>
+    </div>
 @endsection

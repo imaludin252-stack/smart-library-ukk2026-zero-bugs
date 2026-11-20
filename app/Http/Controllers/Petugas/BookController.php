@@ -185,7 +185,10 @@ class BookController extends Controller
             'status' => ['required', 'in:aktif,nonaktif'],
             // S3-06: sanitasi unggahan sampul (MIME asli + ukuran + nama acak).
             'cover' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'mimetypes:image/jpeg,image/png,image/webp', 'max:2048'],
-        ], [], [
+        ], [
+            'kode_buku.unique' => 'Data gagal disimpan! Kode buku tersebut sudah digunakan.',
+            'isbn.unique' => 'Data gagal disimpan! ISBN tersebut sudah digunakan oleh buku lain.',
+        ], [
             'kode_buku' => 'kode buku',
             'isbn' => 'ISBN',
             'id_kategori' => 'kategori',

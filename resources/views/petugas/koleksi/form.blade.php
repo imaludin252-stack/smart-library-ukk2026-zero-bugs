@@ -15,14 +15,27 @@
         </a>
     </div>
 
-    @if ($errors->any())
-        <div class="mb-4 flex items-start gap-2 rounded-xl bg-[var(--color-danger-bg)] px-4 py-3 text-[13px] font-semibold text-[var(--color-danger)]">
+    @if (session('error'))
+        <div class="mb-4 flex items-start gap-2 rounded-xl border-l-4 border-[var(--color-danger)] bg-[var(--color-danger-bg)] px-4 py-3 text-[13px] font-semibold text-[var(--color-danger)]">
             <x-icon name="alert-triangle" class="mt-0.5 h-4 w-4 shrink-0" />
-            <ul class="list-inside list-disc space-y-0.5">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            <div>
+                <p class="font-bold">Peringatan Validasi:</p>
+                <p>{{ session('error') }}</p>
+            </div>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="mb-4 flex items-start gap-2 rounded-xl border-l-4 border-[var(--color-danger)] bg-[var(--color-danger-bg)] px-4 py-3 text-[13px] font-semibold text-[var(--color-danger)]">
+            <x-icon name="alert-triangle" class="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+                <p class="font-bold">Peringatan Validasi:</p>
+                <ul class="list-inside list-disc space-y-0.5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
     @endif
 
